@@ -1,20 +1,17 @@
+
 {
   "name": "NX Store",
   "short_name": "NX Store",
   "description": "NX Store Official Website",
-  "start_url": "./",
+  "start_url": "/NX_-Store/",
+  "scope": "/NX_-Store/",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "./logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./logo.png",
-      "sizes": "512x512",
+      "src": "/NX_-Store/assets/logo.png",
+      "sizes": "192x192 512x512",
       "type": "image/png"
     }
   ]
