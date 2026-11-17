@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>NX Store</title>
+
+    <script>
+    (function () {
+        "use strict";
+
+        function nxIsSupportedMobilePhone() {
+
+            try {
+
+                if (typeof navigator === "undefined") {
+                    return false;
+                }
+
+                var ua = (navigator.userAgent || "").toString();
+
+                if (!ua) {
+                    return false;
+                }
+
+                var platform = (navigator.platform || "").toString();
+
+                var maxTouchPoints =
+                    (typeof navigator.maxTouchPoints === "number")
+                        ? navigator.maxTouchPoints
+                        : 0;
+
+                if (/iPad/i.test(ua)) {
+                    return false;
+                }
+
+                if (
+                    /Macintosh|MacIntel/i.test(platform) &&
+                    maxTouchPoints > 1
+                ) {
+                    return false;
+                }
+
+                if (
+                    /Tablet|PlayBook|Kindle|Nexus 7|Nexus 9|SM-T\d{3}|GT-P\d{4}/i
+                        .test(ua)
+                ) {
+                    return false;
+                }
+
+                if (
+                    /(SmartTV|SMART-TV|Tizen|Web0S|webOS|NetCast|AppleTV|GoogleTV|HbbTV|Opera TV|Roku|CrKey|BRAVIA|Viera|PlayStation|Xbox|Nintendo|AFTT|AFTS|AFTB|Fire TV)/i
+                        .test(ua)
+                ) {
+                    return false;
+                }
+
+                var isAndroid = /Android/i.test(ua);
+
+                var isAndroidMobile =
+                    isAndroid && /Mobile/i.test(ua);
+
+                if (isAndroid && !isAndroidMobile) {
+                    return false;
+                }
+
+                if (/iPhone/i.test(ua)) {
+                    return true;
+                }
+
+                if (isAndroidMobile) {
+                    return true;
+                }
+
+                return false;
+
+            } catch (error) {
+
+                return false;
+
+            }
+
+        }
+
+        var nxAllowed = false;
+
+        try {
+            nxAllowed = nxIsSupportedMobilePhone() === true;
+        } catch (error) {
+            nxAllowed = false;
+        }
+
+        window.NX_DEVICE_ALLOWED = nxAllowed;
+
+        if (nxAllowed) {
+            document.documentElement.removeAttribute("data-nx-blocked");
+        } else {
+            document.documentElement.setAttribute("data-nx-blocked", "");
+        }
+
+    })();
+    </script>
+
+<style>
+    :root {
+        --primary-bg: #ffffff;
+        --secondary-bg: #f1f3f4;
+        --text-main: #202124;
+        --text-sub: #5f6368;
+        --blue-600: #2563EB;
+        --accent-color: var(--blue-600);
+        --header-height: 60px;
+        --shadow: 0 2px 5px rgba(0,0,0,0.1);
+        --card-bg: #ffffff;
+        --badge-blue: var(--blue-600);
+        --badge-orange: #f57c00;
+        --grid-gap: 4px;
+        --main-spacing: 6px;
+        --fallback-bg: #f1f3f4;
+        --category-active-color: var(--blue-600);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+        outline: none !important;
+    }
+
+    body {
+        background-color: var(--primary-bg);
+        color: var(--text-main);
+        line-height: 1.6;
+        overflow-x: hidden;
+        user-select: none;
+    }
+
+    #nx-app-root {
+        display: block;
+    }
+
+    html[data-nx-blocked] #nx-app-root {
+        display: none !important;
+    }
+
+    html[data-nx-blocked] body {
+        overflow: hidden;
+    }
+
+    #nx-blocked-screen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        z-index: 2147483647;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+    }
+
+    html[data-nx-blocked] #nx-blocked-screen {
+        display: flex;
+    }
+
+    .nx-blocked-card {
+        max-width: 420px;
+        width: 100%;
+    }
+
+    .nx-blocked-title {
+        font-size: 1.45rem;
+        font-weight: 700;
+        color: var(--text-main);
+        letter-spacing: -0.3px;
+        margin-bottom: 14px;
+    }
+
+    .nx-blocked-text {
+        font-size: 0.95rem;
+        font-weight: 400;
+        color: var(--text-sub);
+        line-height: 1.65;
+        margin-bottom: 10px;
+    }
+
+    #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100dvh;
+        background-color: #ffffff;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    #loading-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    #loading-overlay.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: var(--header-height);
+        background-color: var(--primary-bg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        z-index: 2000;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        min-width: 50px;
+    }
+
+    .logo-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        border-radius: 50%;
+    }
+
+    .logo-icon:active {
+        background-color: rgba(0,0,0,0.05);
+    }
+
+    .logo-icon img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+    }
+
+    .header-center {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        height: 100%;
+        margin: 0 10px;
+    }
+
+    .header-title-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--text-main);
+        letter-spacing: -0.5px;
+        cursor: pointer;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 50px;
+        justify-content: flex-end;
+        position: relative;
+    }
+
+    .icon-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+        transition: background 0.2s ease;
+        position: relative;
+    }
+
+    .icon-btn:active {
+        background-color: rgba(0,0,0,0.1);
+    }
+
+    .icon-btn svg {
+        width: 22px;
+        height: 22px;
+        fill: var(--text-sub);
+        transition: fill 0.2s ease;
+    }
+
+    main {
+        width: 100%;
+        padding-left: 8px;
+        padding-right: 1px;
+        margin: 0;
+        padding-top: calc(var(--header-height) + 48px);
+    }
+
+    .category-tabs-container {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        width: 100%;
+        background-color: var(--primary-bg);
+        z-index: 1999;
+    }
+
+    .category-tabs {
+        display: flex;
+        gap: 35px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding: 0 16px;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        background-color: var(--primary-bg);
+    }
+
+    .category-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-tab {
+        padding: 12px 8px 10px 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-sub);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        position: relative;
+        flex-shrink: 0;
+        letter-spacing: 0.3px;
+    }
+
+    .category-tab.active {
+        color: var(--category-active-color);
+        font-weight: 600;
+    }
+
+    .tab-indicator {
+        position: absolute;
+        bottom: 0;
+        height: 3px;
+        background-color: var(--category-active-color);
+        border-radius: 3px 3px 0 0;
+        transition: left 0.25s cubic-bezier(0.2,0.9,0.4,1.1),
+                    width 0.25s cubic-bezier(0.2,0.9,0.4,1.1);
+        will-change: left,width;
+    }
+
+    #no-results {
+        display: none;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-sub);
+        font-size: 1rem;
+    }
+
+    .category-section {
+        margin-bottom: 22px;
+        padding-right: 8px;
+    }
+
+    .category-header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 6px 8px 6px 0;
+        margin-bottom: 4px;
+    }
+
+    .category-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-main);
+        letter-spacing: -0.2px;
+    }
+
+    .app-carousel {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding: 2px 8px 6px 0;
+        scroll-snap-type: x proximity;
+    }
+
+    .app-carousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .carousel-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        width: clamp(260px,82vw,340px);
+    }
+
+    .app-item {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        width: 100%;
+        position: relative;
+    }
+
+    .app-item:active {
+        opacity: 0.6;
+    }
+
+    .app-icon-large {
+        width: clamp(56px,16vw,72px);
+        height: clamp(56px,16vw,72px);
+        flex-shrink: 0;
+        background-color: var(--secondary-bg);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid var(--text-sub);
+    }
+
+    .app-icon-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+        display: block;
+    }
+
+    .app-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-width: 0;
+        justify-content: flex-start;
+        gap: 2px;
+    }
+
+    .app-name {
+        width: 100%;
+        margin-top: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: left;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-tags {
+        width: 100%;
+        font-size: 0.78rem;
+        font-weight: 400;
+        line-height: 1.3;
+        text-align: left;
+        color: var(--text-sub);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 1px;
+    }
+
+    .app-meta {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        margin-top: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-sub);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-meta .app-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .app-meta .rating-star {
+        color: #f5a623;
+    }
+
+    .app-meta .rating-value {
+        color: var(--text-sub);
+    }
+
+    .app-meta .app-size {
+        display: inline-block;
+    }
+
+    .see-more-container {
+        text-align: center;
+        margin: 8px 0 30px;
+    }
+
+    .see-more-btn {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 12px 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .see-more-btn:active {
+        opacity: 0.8;
+    }
+
+    .see-more-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .loader-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--secondary-bg);
+        border-top-color: var(--accent-color);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    #scroll-sentinel {
+        height: 1px;
+        width: 100%;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .loading-indicator-container {
+        text-align: center;
+        padding: 16px 0 30px;
+        display: none;
+    }
+
+    .loading-indicator-container.active {
+        display: block;
+    }
+
+    .loading-indicator-container .loader-spinner {
+        width: 28px;
+        height: 28px;
+        border-width: 3px;
+    }
+
+    .loading-indicator-container .loading-text {
+        font-size: 0.85rem;
+        color: var(--text-sub);
+        margin-top: 8px;
+    }
+</style>
+
+</head>
+<body>
+
+<div id="nx-blocked-screen">
+    <div class="nx-blocked-card">
+        <div class="nx-blocked-title">Device Not Supported</div>
+        <div class="nx-blocked-text">
+            NX Store is only available on Android and iPhone mobile devices.
+        </div>
+        <div class="nx-blocked-text">
+            Please open this website using a supported mobile phone.
+        </div>
+    </div>
+</div>
+
+<div id="nx-app-root">
+
+    <div id="loading-overlay" class="show"></div>
+
+    <header id="main-header">
+
+        <div class="header-left">
+            <div class="logo-icon" id="homeLogo">
+                <img src="favicon.ico" alt="Play Store">
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="header-title-container">
+                <div class="header-title" id="homeTitle">
+                    NX Store
+                </div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <button class="icon-btn" id="searchButton" aria-label="Search">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </div>
+
+    </header>
+
+    <div class="category-tabs-container" id="categoryTabsContainer">
+        <div class="category-tabs" id="categoryTabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+    </div>
+
+    <main id="main-content">
+
+        <div id="no-results">No apps found</div>
+
+        <section id="content-section">
+
+            <div id="category-sections-container"></div>
+
+            <div id="scroll-sentinel"></div>
+
+            <div class="loading-indicator-container" id="loadingIndicator">
+                <div class="loader-spinner"></div>
+                <div class="loading-text">Loading more apps…</div>
+            </div>
+
+            <div id="see-more-container" class="see-more-container"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script type="text/plain" id="nx-app-module">
+
+    import { db } from "./firebase.js";
+
+    import {
+        doc,
+        getDoc
+    } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+    const STORE_COLLECTION = "store";
+
+    const STORE_DOCUMENT_ID =
+        "HLkJZNcBt9XnAACciW2sZHNfmkS2";
+
+    const FIXED_CATEGORIES = [
+        { key: "for-you", label: "For You" },
+        { key: "games", label: "Games" },
+        { key: "tools", label: "Tools" },
+        { key: "favourite", label: "Favourite" }
+    ];
+
+    const FALLBACK_IMAGE =
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23cccccc'/%3E%3Ctext x='50' y='50' font-size='18' text-anchor='middle' dy='.3em' fill='%23666'%3E?%3C/text%3E%3C/svg%3E";
+
+    const INITIAL_DISPLAY_LIMIT = 10;
+
+    const DISPLAY_INCREMENT = 10;
+
+    const state = {
+
+        allApps: [],
+
+        currentCategory: "for-you",
+
+        displayLimit: INITIAL_DISPLAY_LIMIT,
+
+        dynamicCategories: [],
+
+        categoryKeyMap: new Map(),
+
+        isLoading: false,
+
+        loadError: false
+
+    };
+
+    const pagination = {
+
+        initialLoadDone: false,
+
+        isLoading: false,
+
+        hasMoreApps: false,
+
+        loadedIds: new Set(),
+
+        visibleCount: 0
+
+    };
+
+    const noResults =
+        document.getElementById("no-results");
+
+    const seeMoreContainer =
+        document.getElementById("see-more-container");
+
+    const categoryTabsEl =
+        document.getElementById("categoryTabs");
+
+    const indicator =
+        document.getElementById("tabIndicator");
+
+    const loadingIndicator =
+        document.getElementById("loadingIndicator");
+
+    const sentinelEl =
+        document.getElementById("scroll-sentinel");
+
+    const loadingOverlay =
+        document.getElementById("loading-overlay");
+
+    const sectionsContainer =
+        document.getElementById("category-sections-container");
+
+    function normalizeCategoryName(name) {
+
+        if (
+            name === undefined ||
+            name === null
+        ) {
+            return "";
+        }
+
+        return String(name)
+            .trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+
+    }
+
+    function makeCategoryKey(name) {
+
+        return normalizeCategoryName(name)
+            .replace(/\s+/g, "-");
+
+    }
+
+    function safeString(value, fallback = "") {
+
+        if (
+            value === undefined ||
+            value === null
+        ) {
+            return fallback;
+        }
+
+        if (
+            typeof value !== "string" &&
+            typeof value !== "number"
+        ) {
+            return fallback;
+        }
+
+        const result = String(value).trim();
+
+        return result || fallback;
+
+    }
+
+    function isValidUrl(value) {
+
+        if (
+            typeof value !== "string" ||
+            !value.trim()
+        ) {
+            return false;
+        }
+
+        try {
+
+            const url = new URL(value.trim());
+
+            return (
+                url.protocol === "https:" ||
+                url.protocol === "http:"
+            );
+
+        } catch {
+
+            return false;
+
+        }
+
+    }
+
+    function showLoadingIndicator(show) {
+
+        loadingIndicator.classList.toggle(
+            "active",
+            Boolean(show)
+        );
+
+    }
+
+    function showOverlay() {
+
+        loadingOverlay.style.display = "flex";
+
+        loadingOverlay.classList.remove("hide");
+
+        loadingOverlay.classList.add("show");
+
+    }
+
+    function hideOverlay() {
+
+        loadingOverlay.classList.remove("show");
+
+        loadingOverlay.classList.add("hide");
+
+        setTimeout(() => {
+
+            loadingOverlay.style.display = "none";
+
+        }, 350);
+
+    }
+
+    function normalizeFilter(value) {
+
+        if (
+            value === 1 ||
+            value === "1"
+        ) {
+
+            return "1";
+
+        }
+
+        if (
+            value === 2 ||
+            value === "2"
+        ) {
+
+            return "2";
+
+        }
+
+        return null;
+
+    }
+
+    function isValidStarsArray(stars) {
+
+        if (!Array.isArray(stars)) {
+
+            return false;
+
+        }
+
+        if (stars.length !== 5) {
+
+            return false;
+
+        }
+
+        for (let i = 0; i < 5; i++) {
+
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    stars,
+                    i
+                )
+            ) {
+
+                return false;
+
+            }
+
+            const voteCount = stars[i];
+
+            if (
+
+                typeof voteCount !== "number" ||
+
+                !Number.isSafeInteger(voteCount) ||
+
+                voteCount < 0
+
+            ) {
+
+                return false;
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+    function calculateOverallRating(stars) {
+
+        if (!isValidStarsArray(stars)) {
+
+            return null;
+
+        }
+
+        let totalVotes = 0n;
+
+        let weightedTotal = 0n;
+
+        for (let i = 0; i < 5; i++) {
+
+            const voteCount = BigInt(stars[i]);
+
+            const starValue = BigInt(i + 1);
+
+            totalVotes += voteCount;
+
+            weightedTotal +=
+
+                starValue * voteCount;
+
+        }
+
+        if (totalVotes === 0n) {
+
+            return null;
+
+        }
+
+        const overallRating =
+
+            Number(weightedTotal) /
+
+            Number(totalVotes);
+
+        if (
+
+            typeof overallRating !== "number" ||
+
+            !Number.isFinite(overallRating)
+
+        ) {
+
+            return null;
+
+        }
+
+        return overallRating;
+
+    }
+
+    function runRatingCalculationTests() {
+
+        const testCases = [
+
+            {
+                name: "Normal weighted average",
+                stars: [10, 20, 30, 40, 50],
+                expected: 3.6666666666666665
+            },
+
+            {
+                name: "Only 5-Star votes",
+                stars: [0, 0, 0, 0, 100],
+                expected: 5
+            },
+
+            {
+                name: "Only 1-Star votes",
+                stars: [100, 0, 0, 0, 0],
+                expected: 1
+            },
+
+            {
+                name: "Only 2-Star votes",
+                stars: [0, 100, 0, 0, 0],
+                expected: 2
+            },
+
+            {
+                name: "Only 3-Star votes",
+                stars: [0, 0, 100, 0, 0],
+                expected: 3
+            },
+
+            {
+                name: "Only 4-Star votes",
+                stars: [0, 0, 0, 100, 0],
+                expected: 4
+            },
+
+            {
+                name: "Zero votes",
+                stars: [0, 0, 0, 0, 0],
+                expected: null
+            },
+
+            {
+                name: "Array with fewer elements",
+                stars: [10, 20, 30],
+                expected: null
+            },
+
+            {
+                name: "Null array",
+                stars: null,
+                expected: null
+            },
+
+            {
+                name: "Negative vote count",
+                stars: [10, -5, 30, 40, 50],
+                expected: null
+            },
+
+            {
+                name: "String vote count",
+                stars: ["10", 20, 30, 40, 50],
+                expected: null
+            },
+
+            {
+                name: "Array with extra elements",
+                stars: [10, 20, 30, 40, 50, 60],
+                expected: null
+            },
+
+            {
+                name: "Decimal vote count",
+                stars: [10, 20.5, 30, 40, 50],
+                expected: null
+            },
+
+            {
+                name: "NaN vote count",
+                stars: [10, NaN, 30, 40, 50],
+                expected: null
+            },
+
+            {
+                name: "Infinity vote count",
+                stars: [10, Infinity, 30, 40, 50],
+                expected: null
+            },
+
+            {
+                name: "Undefined array",
+                stars: undefined,
+                expected: null
+            }
+
+        ];
+
+        let passed = 0;
+
+        let failed = 0;
+
+        testCases.forEach(test => {
+
+            const actual =
+
+                calculateOverallRating(test.stars);
+
+            let isCorrect;
+
+            if (test.expected === null) {
+
+                isCorrect = actual === null;
+
+            } else {
+
+                isCorrect = (
+
+                    typeof actual === "number" &&
+
+                    Number.isFinite(actual) &&
+
+                    Math.abs(
+                        actual - test.expected
+                    ) < 0.000000000001
+
+                );
+
+            }
+
+            if (isCorrect) {
+
+                passed++;
+
+            } else {
+
+                failed++;
+
+                console.error(
+
+                    "Rating test failed:",
+
+                    test.name,
+
+                    {
+                        expected: test.expected,
+                        actual: actual
+                    }
+
+                );
+
+            }
+
+        });
+
+        console.log(
+
+            `Rating Tests: ${passed} passed, ${failed} failed out of ${testCases.length}`
+
+        );
+
+        return {
+
+            total: testCases.length,
+
+            passed: passed,
+
+            failed: failed,
+
+            success: failed === 0
+
+        };
+
+    }
+
+    const ratingTestResults =
+
+        runRatingCalculationTests();
+
+    function normalizeAppSize(value) {
+
+        if (
+
+            typeof value === "string" &&
+
+            value.trim().length > 0
+
+        ) {
+
+            return value;
+
+        }
+
+        if (
+
+            typeof value === "number" &&
+
+            Number.isFinite(value)
+
+        ) {
+
+            return String(value);
+
+        }
+
+        return "";
+
+    }
+
+    function normalizeTags(value) {
+
+        if (!Array.isArray(value)) {
+
+            return [];
+
+        }
+
+        return value
+
+            .filter(tag => {
+
+                return typeof tag === "string";
+
+            })
+
+            .map(tag => {
+
+                return tag.trim();
+
+            })
+
+            .filter(tag => {
+
+                return tag.length > 0;
+
+            });
+
+    }
+
+    function isValidAppMap(value) {
+
+        if (
+
+            !value ||
+
+            typeof value !== "object" ||
+
+            Array.isArray(value)
+
+        ) {
+
+            return false;
+
+        }
+
+        const validAppName =
+
+            typeof value.appName === "string" &&
+
+            value.appName.trim().length > 0;
+
+        const validCategory =
+
+            typeof value.category === "string" &&
+
+            value.category.trim().length > 0;
+
+        const validLogoUrl =
+
+            isValidUrl(value.logoUrl);
+
+        const validTags =
+
+            Array.isArray(value.tags) &&
+
+            value.tags.some(tag => {
+
+                return (
+
+                    typeof tag === "string" &&
+
+                    tag.trim().length > 0
+
+                );
+
+            });
+
+        const validStars =
+
+            isValidStarsArray(value.stars);
+
+        const validAppDataSize =
+
+            normalizeAppSize(value.appDataSize) !== "";
+
+        const validFilter =
+
+            normalizeFilter(value.filter) !== null;
+
+        return (
+
+            validAppName ||
+
+            validCategory ||
+
+            validLogoUrl ||
+
+            validTags ||
+
+            validStars ||
+
+            validAppDataSize ||
+
+            validFilter
+
+        );
+
+    }
+
+    function mapToApp(documentId, mapField, data) {
+
+        const uniqueId =
+
+            `${documentId}::${mapField}`;
+
+        const name = safeString(
+
+            data.appName,
+
+            "Unnamed App"
+
+        );
+
+        const category = safeString(
+
+            data.category,
+
+            "Uncategorized"
+
+        );
+
+        const icon = isValidUrl(data.logoUrl)
+
+            ? data.logoUrl.trim()
+
+            : FALLBACK_IMAGE;
+
+        const tags = normalizeTags(
+
+            data.tags
+
+        );
+
+        const rating = calculateOverallRating(
+
+            data.stars
+
+        );
+
+        const size = normalizeAppSize(
+
+            data.appDataSize
+
+        );
+
+        const filter = normalizeFilter(
+
+            data.filter
+
+        );
+
+        return {
+
+            id: uniqueId,
+
+            documentId: documentId,
+
+            mapField: mapField,
+
+            name: name,
+
+            category: category,
+
+            icon: icon,
+
+            tags: tags,
+
+            rating: rating,
+
+            size: size,
+
+            filter: filter
+
+        };
+
+    }
+
+    function extractAppsFromDocument(docSnap) {
+
+        const extractedApps = [];
+
+        if (!docSnap || !docSnap.exists()) {
+
+            return extractedApps;
+
+        }
+
+        const documentData = docSnap.data();
+
+        if (
+
+            !documentData ||
+
+            typeof documentData !== "object" ||
+
+            Array.isArray(documentData)
+
+        ) {
+
+            return extractedApps;
+
+        }
+
+        for (
+
+            const [mapField, mapData]
+
+            of Object.entries(documentData)
+
+        ) {
+
+            if (!isValidAppMap(mapData)) {
+
+                continue;
+
+            }
+
+            const app = mapToApp(
+
+                docSnap.id,
+
+                mapField,
+
+                mapData
+
+            );
+
+            extractedApps.push(app);
+
+        }
+
+        return extractedApps;
+
+    }
+
+    function generateDynamicCategories() {
+
+        const categoryMap = new Map();
+
+        state.allApps.forEach(app => {
+
+            const originalName = safeString(
+
+                app.category
+
+            );
+
+            const normalizedName =
+
+                normalizeCategoryName(originalName);
+
+            if (!normalizedName) {
+
+                return;
+
+            }
+
+            if (!categoryMap.has(normalizedName)) {
+
+                categoryMap.set(
+
+                    normalizedName,
+
+                    originalName
+
+                );
+
+            }
+
+        });
+
+        state.dynamicCategories = Array.from(
+
+            categoryMap.values()
+
+        );
+
+        state.dynamicCategories.sort(
+
+            (a, b) => {
+
+                return a.localeCompare(
+
+                    b,
+
+                    undefined,
+
+                    {
+
+                        sensitivity: "base"
+
+                    }
+
+                );
+
+            }
+
+        );
+
+        state.categoryKeyMap.clear();
+
+        state.dynamicCategories.forEach(name => {
+
+            state.categoryKeyMap.set(
+
+                makeCategoryKey(name),
+
+                name
+
+            );
+
+        });
+
+    }
+
+    async function loadAllApps() {
+
+        if (pagination.isLoading) {
+
+            return;
+
+        }
+
+        pagination.isLoading = true;
+
+        state.isLoading = true;
+
+        state.loadError = false;
+
+        showLoadingIndicator(true);
+
+        try {
+
+            const storeDocumentRef = doc(
+
+                db,
+
+                STORE_COLLECTION,
+
+                STORE_DOCUMENT_ID
+
+            );
+
+            const storeDocumentSnap = await getDoc(
+
+                storeDocumentRef
+
+            );
+
+            if (!storeDocumentSnap.exists()) {
+
+                console.warn(
+
+                    "NX Store document does not exist:",
+
+                    STORE_DOCUMENT_ID
+
+                );
+
+                state.allApps = [];
+
+                pagination.loadedIds.clear();
+
+                state.dynamicCategories = [];
+
+                pagination.initialLoadDone = true;
+
+                state.loadError = false;
+
+                renderAllSections();
+
+                return;
+
+            }
+
+            const extractedApps =
+
+                extractAppsFromDocument(
+
+                    storeDocumentSnap
+
+                );
+
+            const uniqueIds = new Set();
+
+            const uniqueApps = [];
+
+            extractedApps.forEach(app => {
+
+                if (uniqueIds.has(app.id)) {
+
+                    return;
+
+                }
+
+                uniqueIds.add(app.id);
+
+                uniqueApps.push(app);
+
+            });
+
+            state.allApps = uniqueApps;
+
+            pagination.loadedIds = uniqueIds;
+
+            generateDynamicCategories();
+
+            pagination.displayLimit =
+
+                undefined;
+
+            state.displayLimit =
+
+                INITIAL_DISPLAY_LIMIT;
+
+            pagination.hasMoreApps =
+
+                state.allApps.length >
+
+                state.displayLimit;
+
+            pagination.visibleCount =
+
+                Math.min(
+
+                    state.displayLimit,
+
+                    state.allApps.length
+
+                );
+
+            pagination.initialLoadDone = true;
+
+            state.loadError = false;
+
+            console.log(
+
+                "Firestore document ID:",
+
+                STORE_DOCUMENT_ID
+
+            );
+
+            console.log(
+
+                "Firestore document exists:",
+
+                storeDocumentSnap.exists()
+
+            );
+
+            console.log(
+
+                "Total extracted App Maps:",
+
+                state.allApps.length
+
+            );
+
+            console.log(
+
+                "Unique application IDs:",
+
+                pagination.loadedIds.size
+
+            );
+
+            console.log(
+
+                "Dynamic categories:",
+
+                state.dynamicCategories
+
+            );
+
+            console.log(
+
+                "Vote-based rating tests:",
+
+                ratingTestResults
+
+            );
+
+            renderAllSections();
+
+        } catch (error) {
+
+            console.error(
+
+                "Failed to load NX Store document:",
+
+                error
+
+            );
+
+            state.allApps = [];
+
+            state.dynamicCategories = [];
+
+            pagination.loadedIds.clear();
+
+            state.loadError = true;
+
+            pagination.initialLoadDone = true;
+
+            noResults.textContent =
+
+                "Failed to load apps. Please check your internet connection and try again.";
+
+            noResults.style.display = "block";
+
+            sectionsContainer.replaceChildren();
+
+            seeMoreContainer.replaceChildren();
+
+        } finally {
+
+            pagination.isLoading = false;
+
+            state.isLoading = false;
+
+            showLoadingIndicator(false);
+
+        }
+
+    }
+
+    function getSavedFavouriteIds() {
+
+        try {
+
+            const savedData =
+
+                localStorage.getItem("Save_apps_ENYW1QoR2Dw_9Bwql4OBqUoBOay");
+
+            if (!savedData) {
+
+                return new Set();
+
+            }
+
+            const parsed = JSON.parse(savedData);
+
+            if (
+
+                !parsed ||
+
+                !Array.isArray(parsed.apps)
+
+            ) {
+
+                return new Set();
+
+            }
+
+            return new Set(
+
+                parsed.apps
+
+                    .filter(value => {
+
+                        return (
+
+                            typeof value === "string" ||
+
+                            typeof value === "number"
+
+                        );
+
+                    })
+
+                    .map(value => String(value))
+
+            );
+
+        } catch (error) {
+
+            console.error(
+
+                "Favourite data error:",
+
+                error
+
+            );
+
+            return new Set();
+
+        }
+
+    }
+
+    function getFavouriteApps() {
+
+        const savedIds =
+
+            getSavedFavouriteIds();
+
+        return state.allApps.filter(app => {
+
+            return (
+
+                savedIds.has(app.id) ||
+
+                savedIds.has(app.documentId)
+
+            );
+
+        });
+
+    }
+
+    function getAppsForFilter(filterKey) {
+
+        if (filterKey === "for-you") {
+
+            return state.allApps;
+
+        }
+
+        if (filterKey === "favourite") {
+
+            return getFavouriteApps();
+
+        }
+
+        if (filterKey === "games") {
+
+            return state.allApps.filter(app => {
+
+                return app.filter === "1";
+
+            });
+
+        }
+
+        if (filterKey === "tools") {
+
+            return state.allApps.filter(app => {
+
+                return app.filter === "2";
+
+            });
+
+        }
+
+        return [];
+
+    }
+
+    function buildCategoryFilters() {
+
+        categoryTabsEl
+
+            .querySelectorAll(".category-tab")
+
+            .forEach(tab => {
+
+                tab.remove();
+
+            });
+
+        FIXED_CATEGORIES.forEach(cat => {
+
+            const tab =
+
+                document.createElement("button");
+
+            tab.className = "category-tab";
+
+            tab.dataset.category = cat.key;
+
+            tab.textContent = cat.label;
+
+            if (
+
+                state.currentCategory === cat.key
+
+            ) {
+
+                tab.classList.add("active");
+
+            }
+
+            tab.addEventListener("click", () => {
+
+                onCategorySelect(cat.key);
+
+            });
+
+            categoryTabsEl.insertBefore(
+
+                tab,
+
+                indicator
+
+            );
+
+        });
+
+        updateActiveTabAndIndicator();
+
+    }
+
+    function updateActiveTabAndIndicator() {
+
+        const tabs =
+
+            categoryTabsEl.querySelectorAll(
+
+                ".category-tab"
+
+            );
+
+        tabs.forEach(tab => {
+
+            tab.classList.toggle(
+
+                "active",
+
+                tab.dataset.category ===
+
+                state.currentCategory
+
+            );
+
+        });
+
+        updateIndicator();
+
+    }
+
+    function updateIndicator() {
+
+        const activeTab =
+
+            categoryTabsEl.querySelector(
+
+                ".category-tab.active"
+
+            );
+
+        if (!activeTab) {
+
+            return;
+
+        }
+
+        const tabRect =
+
+            activeTab.getBoundingClientRect();
+
+        const containerRect =
+
+            categoryTabsEl.getBoundingClientRect();
+
+        indicator.style.left =
+
+            `${tabRect.left - containerRect.left}px`;
+
+        indicator.style.width =
+
+            `${tabRect.width}px`;
+
+    }
+
+    function buildCategorySections() {
+
+        const filteredApps = getAppsForFilter(
+
+            state.currentCategory
+
+        );
+
+        const visibleApps = filteredApps.slice(
+
+            0,
+
+            state.displayLimit
+
+        );
+
+        const categoryMap = new Map();
+
+        visibleApps.forEach(app => {
+
+            const originalName = safeString(
+
+                app.category,
+
+                "Uncategorized"
+
+            );
+
+            const normalizedName =
+
+                normalizeCategoryName(originalName) ||
+
+                "uncategorized";
+
+            if (!categoryMap.has(normalizedName)) {
+
+                categoryMap.set(
+
+                    normalizedName,
+
+                    {
+
+                        name: originalName,
+
+                        key: makeCategoryKey(originalName),
+
+                        apps: []
+
+                    }
+
+                );
+
+            }
+
+            categoryMap.get(normalizedName).apps.push(app);
+
+        });
+
+        return Array.from(
+
+            categoryMap.values()
+
+        ).sort((a, b) => {
+
+            return a.name.localeCompare(
+
+                b.name,
+
+                undefined,
+
+                {
+
+                    sensitivity: "base"
+
+                }
+
+            );
+
+        });
+
+    }
+
+    function goHome() {
+
+        window.location.href = "index.html";
+
+    }
+
+    function handleAppClick(app) {
+
+        if (
+
+            !app ||
+
+            app.documentId !== STORE_DOCUMENT_ID ||
+
+            !app.mapField ||
+
+            !app.id
+
+        ) {
+
+            console.error(
+
+                "Invalid application identity:",
+
+                app
+
+            );
+
+            return;
+
+        }
+
+        const appIdData = {
+
+            documentId: app.documentId,
+
+            mapField: app.mapField
+
+        };
+
+        try {
+
+            localStorage.setItem(
+
+                "App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay",
+
+                JSON.stringify(appIdData)
+
+            );
+
+            window.location.href =
+
+                "download_page.html";
+
+        } catch (error) {
+
+            console.error(
+
+                "Unable to save app identification:",
+
+                error
+
+            );
+
+            alert(
+
+                "Unable to open this app. Please try again."
+
+            );
+
+        }
+
+    }
+
+    function createAppCard(app) {
+
+        const card =
+
+            document.createElement("div");
+
+        card.className = "app-item";
+
+        card.dataset.appId = app.id;
+
+        card.setAttribute(
+
+            "role",
+
+            "button"
+
+        );
+
+        card.setAttribute(
+
+            "tabindex",
+
+            "0"
+
+        );
+
+        card.setAttribute(
+
+            "aria-label",
+
+            `Open ${app.name}`
+
+        );
+
+        const iconContainer =
+
+            document.createElement("div");
+
+        iconContainer.className =
+
+            "app-icon-large";
+
+        const img =
+
+            document.createElement("img");
+
+        img.src = isValidUrl(app.icon)
+
+            ? app.icon
+
+            : FALLBACK_IMAGE;
+
+        img.alt = app.name;
+
+        img.loading = "lazy";
+
+        img.onerror = function () {
+
+            this.onerror = null;
+
+            this.src = FALLBACK_IMAGE;
+
+        };
+
+        iconContainer.appendChild(img);
+
+        const info =
+
+            document.createElement("div");
+
+        info.className = "app-info";
+
+        const name =
+
+            document.createElement("div");
+
+        name.className = "app-name";
+
+        name.textContent = app.name;
+
+        const tags =
+
+            document.createElement("div");
+
+        tags.className = "app-tags";
+
+        tags.textContent = app.tags.join(" · ");
+
+        const meta =
+
+            document.createElement("div");
+
+        meta.className = "app-meta";
+
+        if (
+
+            typeof app.rating === "number" &&
+
+            Number.isFinite(app.rating)
+
+        ) {
+
+            const rating =
+
+                document.createElement("span");
+
+            rating.className = "app-rating";
+
+            const star =
+
+                document.createElement("span");
+
+            star.className = "rating-star";
+
+            star.textContent = "★";
+
+            const ratingValue =
+
+                document.createElement("span");
+
+            ratingValue.className = "rating-value";
+
+            ratingValue.textContent =
+
+                app.rating.toFixed(1);
+
+            rating.appendChild(star);
+
+            rating.appendChild(ratingValue);
+
+            meta.appendChild(rating);
+
+        } else {
+
+            const noRating =
+
+                document.createElement("span");
+
+            noRating.className = "app-rating";
+
+            noRating.textContent = "No rating";
+
+            meta.appendChild(noRating);
+
+        }
+
+        if (
+
+            typeof app.size === "string" &&
+
+            app.size.trim().length > 0
+
+        ) {
+
+            const size =
+
+                document.createElement("span");
+
+            size.className = "app-size";
+
+            size.textContent = app.size;
+
+            meta.appendChild(size);
+
+        }
+
+        info.appendChild(name);
+
+        info.appendChild(tags);
+
+        if (meta.children.length > 0) {
+
+            info.appendChild(meta);
+
+        }
+
+        card.appendChild(iconContainer);
+
+        card.appendChild(info);
+
+        card.addEventListener("click", () => {
+
+            handleAppClick(app);
+
+        });
+
+        card.addEventListener("keydown", event => {
+
+            if (
+
+                event.key === "Enter" ||
+
+                event.key === " "
+
+            ) {
+
+                event.preventDefault();
+
+                handleAppClick(app);
+
+            }
+
+        });
+
+        return card;
+
+    }
+
+    function createCategorySection(group) {
+
+        if (
+
+            !group.apps ||
+
+            group.apps.length === 0
+
+        ) {
+
+            return null;
+
+        }
+
+        const section =
+
+            document.createElement("div");
+
+        section.className = "category-section";
+
+        section.dataset.categoryKey = group.key;
+
+        const header =
+
+            document.createElement("div");
+
+        header.className = "category-header";
+
+        const title =
+
+            document.createElement("div");
+
+        title.className = "category-title";
+
+        title.textContent = group.name;
+
+        header.appendChild(title);
+
+        const carousel =
+
+            document.createElement("div");
+
+        carousel.className = "app-carousel";
+
+        for (
+
+            let i = 0;
+
+            i < group.apps.length;
+
+            i += 3
+
+        ) {
+
+            const appsInGroup =
+
+                group.apps.slice(i, i + 3);
+
+            const carouselGroup =
+
+                document.createElement("div");
+
+            carouselGroup.className =
+
+                "carousel-group";
+
+            appsInGroup.forEach(app => {
+
+                carouselGroup.appendChild(
+
+                    createAppCard(app)
+
+                );
+
+            });
+
+            carousel.appendChild(carouselGroup);
+
+        }
+
+        section.appendChild(header);
+
+        section.appendChild(carousel);
+
+        return section;
+
+    }
+
+    function renderAllSections() {
+
+        if (!pagination.initialLoadDone) {
+
+            return;
+
+        }
+
+        sectionsContainer.replaceChildren();
+
+        seeMoreContainer.replaceChildren();
+
+        if (state.loadError) {
+
+            noResults.textContent =
+
+                "Failed to load apps. Please refresh.";
+
+            noResults.style.display = "block";
+
+            return;
+
+        }
+
+        const filteredApps = getAppsForFilter(
+
+            state.currentCategory
+
+        );
+
+        if (filteredApps.length === 0) {
+
+            if (
+
+                state.currentCategory === "favourite"
+
+            ) {
+
+                noResults.textContent =
+
+                    "No favourites yet";
+
+            } else {
+
+                noResults.textContent =
+
+                    "No apps found";
+
+            }
+
+            noResults.style.display = "block";
+
+            pagination.visibleCount = 0;
+
+            pagination.hasMoreApps = false;
+
+            return;
+
+        }
+
+        const sections = buildCategorySections();
+
+        if (sections.length === 0) {
+
+            noResults.textContent =
+
+                "No apps found";
+
+            noResults.style.display = "block";
+
+            return;
+
+        }
+
+        noResults.style.display = "none";
+
+        sections.forEach(group => {
+
+            const section =
+
+                createCategorySection(group);
+
+            if (section) {
+
+                sectionsContainer.appendChild(section);
+
+            }
+
+        });
+
+        pagination.visibleCount = Math.min(
+
+            state.displayLimit,
+
+            filteredApps.length
+
+        );
+
+        pagination.hasMoreApps =
+
+            pagination.visibleCount <
+
+            filteredApps.length;
+
+        if (pagination.hasMoreApps) {
+
+            const button =
+
+                document.createElement("button");
+
+            button.className = "see-more-btn";
+
+            button.type = "button";
+
+            button.textContent = "See More";
+
+            button.addEventListener("click", () => {
+
+                handleSeeMore();
+
+            });
+
+            seeMoreContainer.appendChild(button);
+
+        }
+
+    }
+
+    function onCategorySelect(categoryKey) {
+
+        if (
+
+            state.currentCategory === categoryKey
+
+        ) {
+
+            return;
+
+        }
+
+        state.currentCategory = categoryKey;
+
+        state.displayLimit =
+
+            INITIAL_DISPLAY_LIMIT;
+
+        updateActiveTabAndIndicator();
+
+        renderAllSections();
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+    function handleSeeMore() {
+
+        if (
+
+            state.isLoading ||
+
+            !pagination.hasMoreApps
+
+        ) {
+
+            return;
+
+        }
+
+        state.displayLimit +=
+
+            DISPLAY_INCREMENT;
+
+        renderAllSections();
+
+    }
+
+    function loadMoreApps() {
+
+        if (
+
+            state.isLoading ||
+
+            !pagination.initialLoadDone ||
+
+            !pagination.hasMoreApps
+
+        ) {
+
+            return;
+
+        }
+
+        state.displayLimit +=
+
+            DISPLAY_INCREMENT;
+
+        renderAllSections();
+
+    }
+
+    function setupIntersectionObserver() {
+
+        if (!("IntersectionObserver" in window)) {
+
+            return null;
+
+        }
+
+        const observer = new IntersectionObserver(
+
+            entries => {
+
+                const entry = entries[0];
+
+                if (
+
+                    entry.isIntersecting &&
+
+                    pagination.initialLoadDone &&
+
+                    pagination.hasMoreApps
+
+                ) {
+
+                    loadMoreApps();
+
+                }
+
+            },
+
+            {
+
+                root: null,
+
+                rootMargin: "0px 0px 200px 0px",
+
+                threshold: 0.1
+
+            }
+
+        );
+
+        observer.observe(sentinelEl);
+
+        return observer;
+
+    }
+
+    let observer = null;
+
+    document.getElementById("homeLogo")
+
+        .addEventListener("click", goHome);
+
+    document.getElementById("homeTitle")
+
+        .addEventListener("click", goHome);
+
+    document.getElementById("searchButton")
+
+        .addEventListener("click", () => {
+
+            window.location.href = "search.html";
+
+        });
+
+    async function initializeStore() {
+
+        showOverlay();
+
+        try {
+
+            buildCategoryFilters();
+
+            await loadAllApps();
+
+            observer = setupIntersectionObserver();
+
+            updateIndicator();
+
+        } catch (error) {
+
+            console.error(
+
+                "NX Store initialization error:",
+
+                error
+
+            );
+
+            state.loadError = true;
+
+            pagination.initialLoadDone = true;
+
+            noResults.textContent =
+
+                "Error loading data. Please refresh.";
+
+            noResults.style.display = "block";
+
+            sectionsContainer.replaceChildren();
+
+            seeMoreContainer.replaceChildren();
+
+        } finally {
+
+            hideOverlay();
+
+        }
+
+    }
+
+    window.addEventListener("resize", () => {
+
+        updateIndicator();
+
+    });
+
+    window.addEventListener("focus", () => {
+
+        if (
+
+            pagination.initialLoadDone &&
+
+            state.currentCategory === "favourite"
+
+        ) {
+
+            renderAllSections();
+
+        }
+
+    });
+
+    window.addEventListener("beforeunload", () => {
+
+        if (observer) {
+
+            observer.disconnect();
+
+        }
+
+    });
+
+    initializeStore();
+
+</script>
+
+<script>
+(function () {
+    "use strict";
+
+    if (window.NX_DEVICE_ALLOWED !== true) {
+        return;
+    }
+
+    var source =
+        document.getElementById("nx-app-module");
+
+    if (!source) {
+        return;
+    }
+
+    var moduleCode = source.textContent || "";
+
+    if (!moduleCode.trim()) {
+        return;
+    }
+
+    var moduleScript =
+        document.createElement("script");
+
+    moduleScript.type = "module";
+
+    moduleScript.textContent = moduleCode;
+
+    document.body.appendChild(moduleScript);
+
+})();
+</script>
+
+</body>
+</html>
