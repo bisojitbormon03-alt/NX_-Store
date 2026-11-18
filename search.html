@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <title>Search - Play Store</title>
+
+    <style>
+    :root {
+        --primary-bg: #ffffff;
+        --secondary-bg: #f1f3f4;
+        --text-main: #202124;
+        --text-sub: #5f6368;
+        --blue-600: #2563EB;
+        --accent-color: var(--blue-600);
+
+        --header-height: 60px;
+        --header-padding-x: clamp(8px, 2vw, 20px);
+        --main-padding-x: clamp(8px, 2vw, 24px);
+        --app-icon-size: clamp(64px, 16vw, 88px);
+        --card-gap: clamp(8px, 2.5vw, 16px);
+
+        --ad-height: 90px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        width: 100%;
+        overflow-x: clip;
+    }
+
+    body {
+        width: 100%;
+        min-width: 0;
+        background: var(--primary-bg);
+        color: var(--text-main);
+        line-height: 1.5;
+        overflow-x: clip;
+        user-select: none;
+        padding-top: var(--header-height);
+        padding-bottom: calc(var(--ad-height) + env(safe-area-inset-bottom));
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
+
+    button {
+        outline: none;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: var(--header-height);
+        background: var(--primary-bg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--header-padding-x);
+        z-index: 2000;
+        border-bottom: 1px solid var(--secondary-bg);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+    }
+
+    .back-btn {
+        width: clamp(40px, 6vw, 48px);
+        height: clamp(40px, 6vw, 48px);
+        border: none;
+        background: transparent;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-main);
+        flex-shrink: 0;
+        transition: background 0.2s;
+    }
+
+    .back-btn:active {
+        background: rgba(0, 0, 0, 0.08);
+    }
+
+    .back-btn svg {
+        width: clamp(24px, 4vw, 30px);
+        height: clamp(24px, 4vw, 30px);
+        fill: currentColor;
+    }
+
+    .header-center {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 clamp(4px, 1.5vw, 16px);
+        min-width: 0;
+    }
+
+    .search-box-wrapper {
+        width: 100%;
+        max-width: 560px;
+        min-width: 0;
+        position: relative;
+    }
+
+    .search-box-wrapper input {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        height: clamp(36px, 6vw, 46px);
+        padding: 0 clamp(8px, 2vw, 18px);
+        font-size: clamp(0.95rem, 2vw, 1.25rem);
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        color: var(--text-main);
+        appearance: none;
+        outline: none;
+    }
+
+    .search-box-wrapper input:focus {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        outline: none;
+    }
+
+    .search-box-wrapper input::placeholder {
+        color: var(--text-sub);
+        opacity: 0.8;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 0 0 auto;
+    }
+
+    .search-submit-btn {
+        width: clamp(40px, 6vw, 48px);
+        height: clamp(40px, 6vw, 48px);
+        border: none;
+        background: transparent;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-sub);
+        flex-shrink: 0;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .search-submit-btn:active {
+        background: rgba(0, 0, 0, 0.08);
+    }
+
+    .search-submit-btn svg {
+        width: clamp(22px, 3.5vw, 28px);
+        height: clamp(22px, 3.5vw, 28px);
+        fill: currentColor;
+        transition: fill 0.2s;
+    }
+
+    .search-submit-btn:hover {
+        color: var(--accent-color);
+    }
+
+    main {
+        width: 100%;
+        min-width: 0;
+        max-width: 900px;
+        margin: 0 auto;
+        padding:
+            clamp(12px, 2.5vw, 24px)
+            var(--main-padding-x)
+            40px;
+    }
+
+    .app-results-area {
+        position: relative;
+        width: 100%;
+        min-width: 0;
+        min-height: 360px;
+    }
+
+    #searchStatus {
+        width: 100%;
+        text-align: center;
+        padding: 16px;
+        color: var(--text-sub);
+        font-size: 1rem;
+        display: none;
+    }
+
+    #searchStatus.visible {
+        display: block;
+    }
+
+    #searchStatus.hidden {
+        display: none !important;
+    }
+
+    .search-history-section {
+        width: 100%;
+        min-width: 0;
+        display: none;
+        margin-top: 2px;
+    }
+
+    .search-history-section.visible {
+        display: block;
+    }
+
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        gap: 2px;
+    }
+
+    .history-row {
+        width: 100%;
+        min-width: 0;
+        min-height: 54px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: clamp(8px, 2vw, 12px);
+        padding: 4px 4px;
+        border-radius: 10px;
+        background: transparent;
+        transition: background 0.2s;
+    }
+
+    .history-row:active {
+        background: var(--secondary-bg);
+    }
+
+    .history-icon {
+        width: 48px;
+        height: 48px;
+        min-width: clamp(34px, 8vw, 38px);
+        flex: 0 0 clamp(34px, 8vw, 38px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-sub);
+        pointer-events: none;
+    }
+
+    .history-icon svg {
+        width: 30px;
+        height: 30px;
+        fill: currentColor;
+    }
+
+    .history-term-btn {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: var(--text-main);
+        font-size: 1rem;
+        font-weight: 400;
+        text-align: left;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .history-term-text {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        pointer-events: none;
+    }
+
+    .history-arrow-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        max-width: 44px;
+        flex: 0 0 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        background-color: transparent;
+        color: #5F6368;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-appearance: none;
+        appearance: none;
+        touch-action: manipulation;
+        user-select: none;
+        overflow: visible;
+        box-shadow: none;
+        transition:
+            color 0.2s ease,
+            transform 0.12s ease;
+        will-change: transform;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .history-arrow-btn:hover {
+            background: transparent;
+            background-color: transparent;
+            color: #5F6368;
+        }
+    }
+
+    .history-arrow-btn:focus {
+        outline: none;
+    }
+
+    .history-arrow-btn:focus-visible {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
+    }
+
+    .history-arrow-btn:active {
+        background: transparent;
+        background-color: transparent;
+        transform: scale(0.92);
+    }
+
+    .history-arrow-btn svg {
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        min-height: 22px;
+        display: block;
+        fill: currentColor;
+        pointer-events: none;
+    }
+
+    .history-empty {
+        width: 100%;
+        padding: 28px 12px;
+        text-align: center;
+        color: var(--text-sub);
+        font-size: 0.92rem;
+    }
+
+    .app-grid {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 2vw, 18px);
+        width: 100%;
+        min-width: 0;
+        margin-top: 4px;
+    }
+
+    .app-grid:empty {
+        display: none;
+    }
+
+    .app-item {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--card-gap);
+        background: transparent;
+        border: none;
+        padding: clamp(6px, 1.8vw, 12px);
+        margin: 0;
+        cursor: pointer;
+        position: relative;
+        text-align: left;
+        border-radius: 12px;
+        transition: background 0.2s, opacity 0.2s;
+    }
+
+    .app-item:active {
+        background: var(--secondary-bg);
+        opacity: 0.8;
+    }
+
+    .app-icon-large {
+        width: var(--app-icon-size);
+        height: var(--app-icon-size);
+        min-width: var(--app-icon-size);
+        max-width: var(--app-icon-size);
+        flex: 0 0 var(--app-icon-size);
+        background: var(--secondary-bg);
+        border-radius: clamp(14px, 3vw, 22px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid rgba(95, 99, 104, 0.18);
+        aspect-ratio: 1 / 1;
+        pointer-events: none;
+    }
+
+    .app-icon-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+        display: block;
+        pointer-events: none;
+    }
+
+    .app-info {
+        flex: 1 1 auto;
+        min-width: 0;
+        width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: clamp(4px, 1vw, 5px);
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .app-name {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-tags {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        font-size: clamp(0.68rem, 1.8vw, 0.84rem);
+        font-weight: 400;
+        line-height: 1.35;
+        color: var(--text-sub);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-meta {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        line-height: 1.35;
+    }
+
+    .app-rating {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 1 auto;
+        min-width: 0;
+        font-size: clamp(0.66rem, 1.7vw, 0.82rem);
+        font-weight: 500;
+        color: var(--text-sub);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-rating .rating-star {
+        color: #f5a623;
+        margin-right: 3px;
+        flex-shrink: 0;
+    }
+
+    .app-size {
+        display: inline-block;
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 45%;
+        font-size: clamp(0.66rem, 1.7vw, 0.82rem);
+        font-weight: 500;
+        color: var(--text-sub);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .loader-spinner {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border: 4px solid var(--secondary-bg);
+        border-top-color: var(--accent-color);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 8px;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .fixed-bottom-ad {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: calc(var(--ad-height) + env(safe-area-inset-bottom));
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        z-index: 99999;
+        overflow: hidden;
+        background: transparent;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .ad-slot {
+        position: absolute;
+        left: 50%;
+        bottom: env(safe-area-inset-bottom);
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+        height: var(--ad-height);
+        overflow: hidden;
+        background: transparent;
+    }
+
+    .ad-slot.visible {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+        visibility: visible;
+        height: var(--ad-height);
+    }
+
+    .ad-slot iframe {
+        display: block;
+        border: 0;
+        flex-shrink: 0;
+        max-width: 100%;
+    }
+
+    .fixed-bottom-ad.banner-728 .ad-slot iframe {
+        width: 728px;
+        max-width: 100%;
+        height: 90px;
+    }
+
+    .fixed-bottom-ad.banner-468 .ad-slot iframe {
+        width: 468px;
+        max-width: 100%;
+        height: 60px;
+    }
+
+    .fixed-bottom-ad.banner-320 .ad-slot iframe {
+        width: 320px;
+        max-width: 100%;
+        height: 50px;
+    }
+
+    .app-results-area,
+    .app-grid,
+    .search-history-section,
+    .history-list {
+        max-width: 100%;
+    }
+
+    img {
+        max-width: 100%;
+    }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-left">
+        <button
+            class="back-btn"
+            id="backBtn"
+            type="button"
+            aria-label="Back"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="header-center">
+        <div class="search-box-wrapper">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search apps..."
+                enterkeyhint="search"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-label="Search applications"
+            >
+        </div>
+    </div>
+
+    <div class="header-right">
+        <button
+            class="search-submit-btn"
+            id="searchBtn"
+            type="button"
+            aria-label="Search"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5
+                6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59
+                4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6
+                0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5
+                14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="app-results-area">
+
+        <section
+            id="searchHistorySection"
+            class="search-history-section"
+            aria-label="Search history"
+        >
+            <div
+                id="searchHistoryList"
+                class="history-list"
+                aria-label="Recent search terms"
+            ></div>
+        </section>
+
+        <div
+            id="searchStatus"
+            class="visible"
+            aria-live="polite"
+        >
+            <p style="color:var(--text-sub);font-size:1rem;">
+                Search apps
+            </p>
+        </div>
+
+        <div
+            class="app-grid"
+            id="appGrid"
+            aria-label="Search results"
+        ></div>
+
+    </div>
+</main>
+
+<div
+    id="responsiveBannerAd"
+    class="fixed-bottom-ad"
+    aria-label="Advertisement"
+></div>
+
+<script>
+(function () {
+
+    "use strict";
+
+    const adContainer =
+        document.getElementById("responsiveBannerAd");
+
+    if (!adContainer) return;
+
+    const AD_CONFIGS = {
+
+        "320x50": {
+            width: 320,
+            height: 50,
+            key: "3d64dcd109cbff0eb6b6833800dcc872",
+            src: "https://www.highrevenueformat.com/3d64dcd109cbff0eb6b6833800dcc872/invoke.js",
+            className: "banner-320"
+        },
+
+        "468x60": {
+            width: 468,
+            height: 60,
+            key: "ab09ab2788b403c919f0192107664bb7",
+            src: "https://www.highrevenueformat.com/ab09ab2788b403c919f0192107664bb7/invoke.js",
+            className: "banner-468"
+        },
+
+        "728x90": {
+            width: 728,
+            height: 90,
+            key: "2e92aa89d1d3516d1fc5d471f79d27e1",
+            src: "https://www.highrevenueformat.com/2e92aa89d1d3516d1fc5d471f79d27e1/invoke.js",
+            className: "banner-728"
+        }
+
+    };
+
+    function getAdTypeForWidth(width) {
+
+        if (width <= 400) {
+            return "320x50";
+        }
+
+        if (width <= 550) {
+            return "468x60";
+        }
+
+        return "728x90";
+    }
+
+    function hasRenderedAd(slot) {
+
+        if (!slot) return false;
+
+        const iframe =
+            slot.querySelector("iframe");
+
+        if (iframe) {
+
+            const rect =
+                iframe.getBoundingClientRect();
+
+            if (
+                rect.width > 0 &&
+                rect.height > 0
+            ) {
+                return true;
+            }
+
+            if (
+                iframe.offsetWidth > 0 &&
+                iframe.offsetHeight > 0
+            ) {
+                return true;
+            }
+        }
+
+        const ins =
+            slot.querySelector("ins");
+
+        if (ins) {
+
+            const insRect =
+                ins.getBoundingClientRect();
+
+            if (
+                insRect.width > 0 &&
+                insRect.height > 0
+            ) {
+                return true;
+            }
+
+            if (
+                ins.offsetWidth > 0 &&
+                ins.offsetHeight > 0
+            ) {
+                return true;
+            }
+        }
+
+        const children = slot.children;
+
+        for (let i = 0; i < children.length; i++) {
+
+            const child = children[i];
+
+            const childRect =
+                child.getBoundingClientRect();
+
+            if (
+                childRect.width > 0 &&
+                childRect.height > 0
+            ) {
+                return true;
+            }
+
+            if (
+                child.offsetWidth > 0 &&
+                child.offsetHeight > 0
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function showAdSlot(slot) {
+
+        if (!slot) return;
+
+        slot.classList.add("visible");
+    }
+
+    function hideAdSlot(slot) {
+
+        if (!slot) return;
+
+        slot.classList.remove("visible");
+    }
+
+    let currentAdType = null;
+    let currentSlot = null;
+    let currentScriptLoaded = false;
+    let renderCheckTimer = null;
+    let resizeTimeout = null;
+
+    function updateAdSpace(config) {
+
+        document.documentElement.style.setProperty(
+            "--ad-height",
+            config.height + "px"
+        );
+
+        adContainer.style.height =
+            `calc(${config.height}px + env(safe-area-inset-bottom))`;
+
+        document.body.style.paddingBottom =
+            `calc(${config.height}px + env(safe-area-inset-bottom))`;
+    }
+
+    function createAdSlot(adType) {
+
+        const config = AD_CONFIGS[adType];
+
+        if (!config) return null;
+
+        adContainer.replaceChildren();
+
+        adContainer.className =
+            "fixed-bottom-ad " + config.className;
+
+        const slot =
+            document.createElement("div");
+
+        slot.className = "ad-slot";
+
+        slot.setAttribute(
+            "data-ad-type",
+            adType
+        );
+
+        window.atOptions = {
+            key: config.key,
+            format: "iframe",
+            height: config.height,
+            width: config.width,
+            params: {}
+        };
+
+        const script =
+            document.createElement("script");
+
+        script.src = config.src;
+        script.async = false;
+
+        slot.appendChild(script);
+        adContainer.appendChild(slot);
+
+        currentScriptLoaded = true;
+
+        return slot;
+    }
+
+    function startRenderDetection(slot) {
+
+        if (!slot) return;
+
+        if (renderCheckTimer !== null) {
+
+            clearInterval(renderCheckTimer);
+            renderCheckTimer = null;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 100;
+
+        renderCheckTimer = setInterval(function () {
+
+            attempts++;
+
+            if (currentSlot !== slot) {
+
+                clearInterval(renderCheckTimer);
+                renderCheckTimer = null;
+
+                return;
+            }
+
+            if (hasRenderedAd(slot)) {
+
+                clearInterval(renderCheckTimer);
+                renderCheckTimer = null;
+
+                showAdSlot(slot);
+
+            } else if (attempts >= maxAttempts) {
+
+                clearInterval(renderCheckTimer);
+                renderCheckTimer = null;
+            }
+
+        }, 150);
+    }
+
+    function switchAd(adType) {
+
+        if (!adType || !AD_CONFIGS[adType]) {
+            return;
+        }
+
+        if (
+            adType === currentAdType &&
+            currentScriptLoaded
+        ) {
+            return;
+        }
+
+        const config = AD_CONFIGS[adType];
+
+        updateAdSpace(config);
+
+        if (currentSlot) {
+            hideAdSlot(currentSlot);
+        }
+
+        if (renderCheckTimer !== null) {
+
+            clearInterval(renderCheckTimer);
+            renderCheckTimer = null;
+        }
+
+        if (
+            currentSlot &&
+            currentSlot.parentNode
+        ) {
+            currentSlot.parentNode.removeChild(
+                currentSlot
+            );
+        }
+
+        currentSlot = null;
+        currentScriptLoaded = false;
+        currentAdType = adType;
+
+        currentSlot = createAdSlot(adType);
+
+        if (!currentSlot) return;
+
+        startRenderDetection(currentSlot);
+    }
+
+    const initialWidth =
+        window.innerWidth;
+
+    const initialAdType =
+        getAdTypeForWidth(initialWidth);
+
+    switchAd(initialAdType);
+
+    window.addEventListener("resize", function () {
+
+        if (resizeTimeout !== null) {
+            clearTimeout(resizeTimeout);
+        }
+
+        resizeTimeout = setTimeout(function () {
+
+            const viewportWidth =
+                window.innerWidth;
+
+            const newAdType =
+                getAdTypeForWidth(viewportWidth);
+
+            if (newAdType !== currentAdType) {
+
+                switchAd(newAdType);
+
+            } else {
+
+                updateAdSpace(
+                    AD_CONFIGS[currentAdType]
+                );
+            }
+
+        }, 200);
+
+    });
+
+})();
+</script>
+
+<script type="module">
+
+"use strict";
+
+const FIREBASE_MODULE_URL = "./firebase.js";
+
+const FIRESTORE_MODULE_URL =
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+let firebaseServicesPromise = null;
+
+async function getFirebaseServices() {
+
+    if (!firebaseServicesPromise) {
+
+        firebaseServicesPromise = Promise.all([
+
+            import(FIREBASE_MODULE_URL),
+
+            import(FIRESTORE_MODULE_URL)
+
+        ]).then(([firebaseModule, firestoreModule]) => {
+
+            if (!firebaseModule.db) {
+
+                throw new Error(
+                    "Firebase db export was not found."
+                );
+            }
+
+            if (
+                typeof firestoreModule.doc !== "function" ||
+                typeof firestoreModule.getDoc !== "function"
+            ) {
+
+                throw new Error(
+                    "Firestore document functions are unavailable."
+                );
+            }
+
+            return {
+                db: firebaseModule.db,
+                doc: firestoreModule.doc,
+                getDoc: firestoreModule.getDoc
+            };
+
+        }).catch(error => {
+
+            firebaseServicesPromise = null;
+
+            throw error;
+        });
+    }
+
+    return firebaseServicesPromise;
+}
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const searchBtn =
+    document.getElementById("searchBtn");
+
+const backBtn =
+    document.getElementById("backBtn");
+
+const appGrid =
+    document.getElementById("appGrid");
+
+const searchStatus =
+    document.getElementById("searchStatus");
+
+const searchHistorySection =
+    document.getElementById("searchHistorySection");
+
+const searchHistoryList =
+    document.getElementById("searchHistoryList");
+
+const SEARCH_HISTORY_KEY = "searchHistory_ENYW1QoR2Dw_9Bwql4OBqUoBOay";
+
+const MAX_SEARCH_HISTORY = 20;
+
+function normalizeHistoryTerm(value) {
+
+    if (typeof value !== "string") {
+        return "";
+    }
+
+    return value.trim().replace(/\s+/g, " ");
+}
+
+function readSearchHistory() {
+
+    try {
+
+        const storedValue =
+            localStorage.getItem(SEARCH_HISTORY_KEY);
+
+        if (storedValue === null) {
+            return [];
+        }
+
+        const parsedValue =
+            JSON.parse(storedValue);
+
+        if (!Array.isArray(parsedValue)) {
+
+            localStorage.removeItem(SEARCH_HISTORY_KEY);
+
+            return [];
+        }
+
+        const cleanedHistory = [];
+        const seenTerms = new Set();
+
+        for (const item of parsedValue) {
+
+            if (typeof item !== "string") {
+                continue;
+            }
+
+            const term =
+                normalizeHistoryTerm(item);
+
+            if (!term) {
+                continue;
+            }
+
+            const comparisonKey =
+                term.toLocaleLowerCase();
+
+            if (seenTerms.has(comparisonKey)) {
+                continue;
+            }
+
+            seenTerms.add(comparisonKey);
+            cleanedHistory.push(term);
+
+            if (
+                cleanedHistory.length >=
+                MAX_SEARCH_HISTORY
+            ) {
+                break;
+            }
+        }
+
+        try {
+
+            localStorage.setItem(
+                SEARCH_HISTORY_KEY,
+                JSON.stringify(cleanedHistory)
+            );
+
+        } catch (storageError) {
+
+            console.warn(
+                "Unable to normalize saved search history:",
+                storageError
+            );
+        }
+
+        return cleanedHistory;
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to read search history:",
+            error
+        );
+
+        try {
+
+            localStorage.removeItem(
+                SEARCH_HISTORY_KEY
+            );
+
+        } catch (removeError) {
+
+            console.warn(removeError);
+        }
+
+        return [];
+    }
+}
+
+function saveSearchHistory(searchTerm) {
+
+    const normalizedTerm =
+        normalizeHistoryTerm(searchTerm);
+
+    if (!normalizedTerm) {
+        return readSearchHistory();
+    }
+
+    const existingHistory =
+        readSearchHistory();
+
+    const comparisonKey =
+        normalizedTerm.toLocaleLowerCase();
+
+    const updatedHistory =
+        existingHistory.filter(item =>
+            item.toLocaleLowerCase() !== comparisonKey
+        );
+
+    updatedHistory.unshift(normalizedTerm);
+
+    const limitedHistory =
+        updatedHistory.slice(0, MAX_SEARCH_HISTORY);
+
+    try {
+
+        localStorage.setItem(
+            SEARCH_HISTORY_KEY,
+            JSON.stringify(limitedHistory)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to save search history:",
+            error
+        );
+    }
+
+    return limitedHistory;
+}
+
+function createHistoryRow(searchTerm) {
+
+    const row =
+        document.createElement("div");
+
+    row.className = "history-row";
+
+    const iconContainer =
+        document.createElement("div");
+
+    iconContainer.className = "history-icon";
+
+    iconContainer.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    const historyIcon =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    historyIcon.setAttribute(
+        "viewBox",
+        "0 0 24 24"
+    );
+
+    const historyPath =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+        );
+
+    historyPath.setAttribute(
+        "d",
+        "M13 3a9 9 0 0 0-9 9H1l4 4 4-4H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z"
+    );
+
+    historyIcon.appendChild(historyPath);
+    iconContainer.appendChild(historyIcon);
+
+    const termButton =
+        document.createElement("button");
+
+    termButton.type = "button";
+    termButton.className = "history-term-btn";
+
+    termButton.dataset.historyAction = "search";
+    termButton.dataset.historyTerm = searchTerm;
+
+    termButton.setAttribute(
+        "aria-label",
+        `Search for ${searchTerm}`
+    );
+
+    const termText =
+        document.createElement("span");
+
+    termText.className = "history-term-text";
+    termText.textContent = searchTerm;
+    termText.title = searchTerm;
+
+    termButton.appendChild(termText);
+
+    const arrowButton =
+        document.createElement("button");
+
+    arrowButton.type = "button";
+    arrowButton.className = "history-arrow-btn";
+
+    arrowButton.dataset.historyAction = "fill";
+    arrowButton.dataset.historyTerm = searchTerm;
+
+    arrowButton.setAttribute(
+        "aria-label",
+        `Put ${searchTerm} in search box`
+    );
+
+    const arrowIcon =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    arrowIcon.setAttribute("viewBox", "0 0 24 24");
+    arrowIcon.setAttribute("aria-hidden", "true");
+    arrowIcon.setAttribute("focusable", "false");
+
+    const arrowPath =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+        );
+
+    arrowPath.setAttribute(
+        "d",
+        "M5 15h2V8.41L18.59 20 20 18.59 8.41 7H15V5H5v10z"
+    );
+
+    arrowIcon.appendChild(arrowPath);
+    arrowButton.appendChild(arrowIcon);
+
+    row.appendChild(iconContainer);
+    row.appendChild(termButton);
+    row.appendChild(arrowButton);
+
+    return row;
+}
+
+function renderSearchHistory(historyItems = null) {
+
+    const history =
+        Array.isArray(historyItems)
+            ? historyItems
+            : readSearchHistory();
+
+    searchHistoryList.replaceChildren();
+    appGrid.replaceChildren();
+
+    searchStatus.replaceChildren();
+    searchStatus.className = "hidden";
+
+    searchHistorySection.classList.add("visible");
+
+    if (history.length === 0) {
+
+        const emptyMessage =
+            document.createElement("p");
+
+        emptyMessage.className = "history-empty";
+        emptyMessage.textContent = "No recent searches";
+
+        searchHistoryList.appendChild(emptyMessage);
+
+        return;
+    }
+
+    const fragment =
+        document.createDocumentFragment();
+
+    for (const term of history) {
+
+        fragment.appendChild(
+            createHistoryRow(term)
+        );
+    }
+
+    searchHistoryList.appendChild(fragment);
+}
+
+function hideSearchHistory() {
+
+    searchHistorySection.classList.remove("visible");
+
+    searchHistoryList.replaceChildren();
+}
+
+searchHistoryList.addEventListener(
+    "click",
+    function (event) {
+
+        const actionButton =
+            event.target.closest(
+                "button[data-history-action]"
+            );
+
+        if (
+            !actionButton ||
+            !searchHistoryList.contains(actionButton)
+        ) {
+            return;
+        }
+
+        const action =
+            actionButton.dataset.historyAction;
+
+        const searchTerm =
+            normalizeHistoryTerm(
+                actionButton.dataset.historyTerm
+            );
+
+        if (!searchTerm) {
+            return;
+        }
+
+        if (action === "search") {
+
+            searchInput.value = searchTerm;
+
+            performSearch();
+
+            return;
+        }
+
+        if (action === "fill") {
+
+            searchInput.value = searchTerm;
+
+            searchInput.focus();
+
+            return;
+        }
+    }
+);
+
+const FALLBACK_IMAGE =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23cccccc'/%3E%3Ctext x='50' y='50' font-size='18' text-anchor='middle' dy='.3em' fill='%23666'%3E?%3C/text%3E%3C/svg%3E";
+
+const STORE_COLLECTION = "store";
+
+const STORE_DOCUMENT_ID =
+    "HLkJZNcBt9XnAACciW2sZHNfmkS2";
+
+let cachedApplications = null;
+
+let applicationsLoadingPromise = null;
+
+let searchRequestNumber = 0;
+
+function normalizeText(value) {
+
+    if (typeof value !== "string") {
+        return "";
+    }
+
+    return value.trim().toLocaleLowerCase();
+}
+
+function safeString(value) {
+
+    if (typeof value === "string") {
+        return value.trim();
+    }
+
+    if (
+        typeof value === "number" &&
+        Number.isFinite(value)
+    ) {
+        return String(value);
+    }
+
+    return "";
+}
+
+function isValidIdentifier(value) {
+
+    return (
+        typeof value === "string" &&
+        value.trim().length > 0
+    );
+}
+
+function getSafeImageUrl(value) {
+
+    if (typeof value !== "string") {
+        return FALLBACK_IMAGE;
+    }
+
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+        return FALLBACK_IMAGE;
+    }
+
+    try {
+
+        const parsedUrl = new URL(trimmed);
+
+        if (
+            parsedUrl.protocol !== "https:" &&
+            parsedUrl.protocol !== "http:"
+        ) {
+            return FALLBACK_IMAGE;
+        }
+
+        return parsedUrl.href;
+
+    } catch (error) {
+
+        return FALLBACK_IMAGE;
+    }
+}
+
+function extractTags(value) {
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(tag => typeof tag === "string")
+            .map(tag => tag.trim())
+            .filter(Boolean);
+    }
+
+    if (
+        typeof value === "string" &&
+        value.trim().length > 0
+    ) {
+        return [value.trim()];
+    }
+
+    return [];
+}
+
+function calculateAppRating(stars) {
+
+    if (
+        !Array.isArray(stars) ||
+        stars.length !== 5
+    ) {
+        return null;
+    }
+
+    let totalVotes = 0;
+    let weightedTotal = 0;
+
+    for (let i = 0; i < 5; i++) {
+
+        const voteCount = stars[i];
+
+        if (
+            typeof voteCount !== "number" ||
+            !Number.isSafeInteger(voteCount) ||
+            voteCount < 0
+        ) {
+            return null;
+        }
+
+        if (
+            !Number.isSafeInteger(
+                totalVotes + voteCount
+            )
+        ) {
+            return null;
+        }
+
+        const weightedVotes =
+            (i + 1) * voteCount;
+
+        if (
+            !Number.isSafeInteger(weightedVotes) ||
+            !Number.isSafeInteger(
+                weightedTotal + weightedVotes
+            )
+        ) {
+            return null;
+        }
+
+        totalVotes += voteCount;
+
+        weightedTotal += weightedVotes;
+    }
+
+    if (totalVotes === 0) {
+        return null;
+    }
+
+    const average =
+        weightedTotal / totalVotes;
+
+    if (
+        !Number.isFinite(average) ||
+        average < 1 ||
+        average > 5
+    ) {
+        return null;
+    }
+
+    return Math.round(average * 10) / 10;
+}
+
+function isValidApplicationMap(value) {
+
+    if (
+        value === null ||
+        typeof value !== "object" ||
+        Array.isArray(value)
+    ) {
+        return false;
+    }
+
+    return (
+        typeof value.appName === "string" &&
+        value.appName.trim().length > 0
+    );
+}
+
+function mapToApplication(
+    documentId,
+    mapField,
+    mapValue
+) {
+
+    const name =
+        safeString(mapValue.appName);
+
+    const category =
+        safeString(mapValue.category);
+
+    const tags =
+        extractTags(mapValue.tags);
+
+    const icon =
+        getSafeImageUrl(mapValue.logoUrl);
+
+    const size =
+        safeString(mapValue.appDataSize);
+
+    const rating =
+        calculateAppRating(mapValue.stars);
+
+    const id =
+        `${documentId}::${mapField}`;
+
+    return {
+        id,
+        documentId,
+        mapField,
+        name,
+        category,
+        tags,
+        icon,
+        size,
+        rating
+    };
+}
+
+async function loadApplicationsFromFirestore() {
+
+    if (cachedApplications !== null) {
+        return cachedApplications;
+    }
+
+    if (applicationsLoadingPromise !== null) {
+        return applicationsLoadingPromise;
+    }
+
+    applicationsLoadingPromise = (async function () {
+
+        const services =
+            await getFirebaseServices();
+
+        const storeDocumentRef = services.doc(
+            services.db,
+            STORE_COLLECTION,
+            STORE_DOCUMENT_ID
+        );
+
+        const documentSnapshot =
+            await services.getDoc(storeDocumentRef);
+
+        if (!documentSnapshot.exists()) {
+
+            const notFoundError = new Error(
+                `Firestore document ${STORE_COLLECTION}/${STORE_DOCUMENT_ID} was not found.`
+            );
+
+            notFoundError.code = "DOCUMENT_NOT_FOUND";
+
+            throw notFoundError;
+        }
+
+        const documentData =
+            documentSnapshot.data();
+
+        if (
+            !documentData ||
+            typeof documentData !== "object" ||
+            Array.isArray(documentData)
+        ) {
+
+            const invalidDocumentError = new Error(
+                "The Firestore document does not contain valid application map data."
+            );
+
+            invalidDocumentError.code =
+                "INVALID_DOCUMENT_DATA";
+
+            throw invalidDocumentError;
+        }
+
+        const applications = [];
+
+        const seenIdentifiers = new Set();
+
+        for (
+            const [mapField, mapValue]
+            of Object.entries(documentData)
+        ) {
+
+            if (!isValidIdentifier(mapField)) {
+                continue;
+            }
+
+            if (!isValidApplicationMap(mapValue)) {
+
+                console.warn(
+                    "Skipping invalid application map:",
+                    mapField
+                );
+
+                continue;
+            }
+
+            try {
+
+                const application = mapToApplication(
+                    STORE_DOCUMENT_ID,
+                    mapField,
+                    mapValue
+                );
+
+                if (
+                    seenIdentifiers.has(application.id)
+                ) {
+                    continue;
+                }
+
+                seenIdentifiers.add(application.id);
+
+                applications.push(application);
+
+            } catch (error) {
+
+                console.warn(
+                    "Unable to process application map:",
+                    mapField,
+                    error
+                );
+            }
+        }
+
+        cachedApplications = applications;
+
+        return cachedApplications;
+
+    })();
+
+    try {
+
+        return await applicationsLoadingPromise;
+
+    } catch (error) {
+
+        cachedApplications = null;
+
+        throw error;
+
+    } finally {
+
+        applicationsLoadingPromise = null;
+    }
+}
+
+function applicationMatches(app, searchText) {
+
+    const normalizedQuery =
+        normalizeText(searchText);
+
+    if (!normalizedQuery) {
+        return false;
+    }
+
+    const normalizedName =
+        normalizeText(app.name);
+
+    if (
+        normalizedName &&
+        normalizedName.includes(normalizedQuery)
+    ) {
+        return true;
+    }
+
+    for (const tag of app.tags) {
+
+        const normalizedTag =
+            normalizeText(tag);
+
+        if (
+            normalizedTag &&
+            normalizedTag.includes(normalizedQuery)
+        ) {
+            return true;
+        }
+    }
+
+    const normalizedCategory =
+        normalizeText(app.category);
+
+    if (
+        normalizedCategory &&
+        normalizedCategory.includes(normalizedQuery)
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function setStatusMessage(message) {
+
+    searchStatus.replaceChildren();
+
+    const paragraph =
+        document.createElement("p");
+
+    paragraph.style.color = "var(--text-sub)";
+    paragraph.style.fontSize = "1rem";
+    paragraph.textContent = message;
+
+    searchStatus.appendChild(paragraph);
+
+    searchStatus.className = "visible";
+}
+
+function showInitialStatus() {
+
+    appGrid.replaceChildren();
+
+    setStatusMessage("Search apps");
+}
+
+function showLoadingStatus() {
+
+    hideSearchHistory();
+
+    appGrid.replaceChildren();
+
+    searchStatus.replaceChildren();
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+    wrapper.style.alignItems = "center";
+    wrapper.style.gap = "6px";
+
+    const spinner =
+        document.createElement("div");
+
+    spinner.className = "loader-spinner";
+
+    const paragraph =
+        document.createElement("p");
+
+    paragraph.style.color = "var(--text-sub)";
+    paragraph.style.fontSize = "1rem";
+    paragraph.textContent = "Searching…";
+
+    wrapper.appendChild(spinner);
+    wrapper.appendChild(paragraph);
+
+    searchStatus.appendChild(wrapper);
+
+    searchStatus.className = "visible";
+}
+
+function showNoResultsStatus(searchTerm) {
+
+    appGrid.replaceChildren();
+
+    setStatusMessage(
+        `No apps found for "${searchTerm}"`
+    );
+}
+
+function showErrorStatus(error) {
+
+    appGrid.replaceChildren();
+
+    let message =
+        "Failed to search. Please try again.";
+
+    if (
+        error &&
+        error.code === "DOCUMENT_NOT_FOUND"
+    ) {
+
+        message =
+            "Application data document was not found.";
+
+    } else if (
+        error &&
+        (
+            error.code === "permission-denied" ||
+            error.code === "firestore/permission-denied"
+        )
+    ) {
+
+        message =
+            "Permission denied. Please try again later.";
+
+    } else if (
+        error &&
+        (
+            error.code === "unavailable" ||
+            error.code === "firestore/unavailable" ||
+            error.code === "network-request-failed"
+        )
+    ) {
+
+        message =
+            "Network error. Check your connection and try again.";
+
+    } else if (
+        error &&
+        error.code === "INVALID_DOCUMENT_DATA"
+    ) {
+
+        message =
+            "Invalid application data was received.";
+    }
+
+    setStatusMessage(message);
+}
+
+function createApplicationCard(app) {
+
+    const card =
+        document.createElement("button");
+
+    card.type = "button";
+
+    card.className = "app-item";
+
+    card.dataset.documentId =
+        app.documentId;
+
+    card.dataset.mapField =
+        app.mapField;
+
+    card.setAttribute(
+        "aria-label",
+        app.name || "Open application"
+    );
+
+    const iconContainer =
+        document.createElement("div");
+
+    iconContainer.className =
+        "app-icon-large";
+
+    const image =
+        document.createElement("img");
+
+    image.src =
+        app.icon || FALLBACK_IMAGE;
+
+    image.alt =
+        app.name || "Application icon";
+
+    image.loading = "lazy";
+    image.decoding = "async";
+
+    image.addEventListener("error", function () {
+
+        if (
+            image.getAttribute("src") !== FALLBACK_IMAGE
+        ) {
+            image.src = FALLBACK_IMAGE;
+        }
+
+    }, { once: true });
+
+    iconContainer.appendChild(image);
+
+    const infoContainer =
+        document.createElement("div");
+
+    infoContainer.className =
+        "app-info";
+
+    const nameElement =
+        document.createElement("div");
+
+    nameElement.className =
+        "app-name";
+
+    nameElement.textContent =
+        app.name || "Unnamed App";
+
+    nameElement.title =
+        app.name || "Unnamed App";
+
+    const tagsElement =
+        document.createElement("div");
+
+    tagsElement.className =
+        "app-tags";
+
+    const tagsText =
+        app.tags.length > 0
+            ? app.tags.join(" · ")
+            : "";
+
+    tagsElement.textContent = tagsText;
+    tagsElement.title = tagsText;
+
+    const metaElement =
+        document.createElement("div");
+
+    metaElement.className =
+        "app-meta";
+
+    const ratingElement =
+        document.createElement("span");
+
+    ratingElement.className =
+        "app-rating";
+
+    if (
+        typeof app.rating === "number" &&
+        Number.isFinite(app.rating) &&
+        app.rating >= 0 &&
+        app.rating <= 5
+    ) {
+
+        const ratingText =
+            app.rating.toFixed(1);
+
+        const starElement =
+            document.createElement("span");
+
+        starElement.className =
+            "rating-star";
+
+        starElement.textContent = "★";
+
+        starElement.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        const ratingValue =
+            document.createElement("span");
+
+        ratingValue.textContent =
+            ratingText;
+
+        ratingElement.appendChild(starElement);
+        ratingElement.appendChild(ratingValue);
+
+        ratingElement.setAttribute(
+            "aria-label",
+            `${ratingText} rating`
+        );
+
+    } else {
+
+        ratingElement.textContent =
+            "No rating";
+
+        ratingElement.setAttribute(
+            "aria-label",
+            "No rating available"
+        );
+    }
+
+    metaElement.appendChild(ratingElement);
+
+    if (app.size !== "") {
+
+        const sizeElement =
+            document.createElement("span");
+
+        sizeElement.className =
+            "app-size";
+
+        sizeElement.textContent =
+            app.size;
+
+        sizeElement.title =
+            app.size;
+
+        metaElement.appendChild(sizeElement);
+    }
+
+    infoContainer.appendChild(nameElement);
+
+    infoContainer.appendChild(tagsElement);
+
+    infoContainer.appendChild(metaElement);
+
+    card.appendChild(iconContainer);
+
+    card.appendChild(infoContainer);
+
+    return card;
+}
+
+function renderResults(applications, searchTerm) {
+
+    hideSearchHistory();
+
+    appGrid.replaceChildren();
+
+    if (
+        !applications ||
+        applications.length === 0
+    ) {
+
+        showNoResultsStatus(searchTerm);
+
+        return;
+    }
+
+    const fragment =
+        document.createDocumentFragment();
+
+    const renderedIds =
+        new Set();
+
+    for (const app of applications) {
+
+        if (renderedIds.has(app.id)) {
+            continue;
+        }
+
+        renderedIds.add(app.id);
+
+        const card =
+            createApplicationCard(app);
+
+        fragment.appendChild(card);
+    }
+
+    if (fragment.childNodes.length === 0) {
+
+        showNoResultsStatus(searchTerm);
+
+        return;
+    }
+
+    appGrid.appendChild(fragment);
+
+    searchStatus.replaceChildren();
+
+    searchStatus.className = "hidden";
+}
+
+function selectApplication(appElement) {
+
+    const documentId =
+        appElement.dataset.documentId;
+
+    const mapField =
+        appElement.dataset.mapField;
+
+    if (
+        !isValidIdentifier(documentId) ||
+        !isValidIdentifier(mapField)
+    ) {
+
+        console.error(
+            "Invalid application identifiers."
+        );
+
+        return;
+    }
+
+    const appIdData = {
+        documentId,
+        mapField
+    };
+
+    try {
+
+        localStorage.setItem(
+            "App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay",
+            JSON.stringify(appIdData)
+        );
+
+        window.location.href =
+            "download_page.html";
+
+    } catch (error) {
+
+        console.error(
+            "Unable to save application identifiers:",
+            error
+        );
+
+        alert(
+            "Unable to open this app. Please check your browser storage settings and try again."
+        );
+    }
+}
+
+appGrid.addEventListener("click", function (event) {
+
+    const appElement =
+        event.target.closest(".app-item");
+
+    if (
+        !appElement ||
+        !appGrid.contains(appElement)
+    ) {
+        return;
+    }
+
+    selectApplication(appElement);
+});
+
+async function performSearch() {
+
+    const searchText =
+        normalizeHistoryTerm(searchInput.value);
+
+    const currentRequest =
+        ++searchRequestNumber;
+
+    if (!searchText) {
+
+        searchInput.value = "";
+
+        renderSearchHistory();
+
+        return;
+    }
+
+    searchInput.value = searchText;
+
+    saveSearchHistory(searchText);
+
+    hideSearchHistory();
+
+    showLoadingStatus();
+
+    try {
+
+        const allApplications =
+            await loadApplicationsFromFirestore();
+
+        if (
+            currentRequest !== searchRequestNumber
+        ) {
+            return;
+        }
+
+        const matchingApplications =
+            allApplications.filter(app =>
+                applicationMatches(app, searchText)
+            );
+
+        if (
+            currentRequest !== searchRequestNumber
+        ) {
+            return;
+        }
+
+        renderResults(
+            matchingApplications,
+            searchText
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Firestore search failed:",
+            error
+        );
+
+        if (
+            currentRequest !== searchRequestNumber
+        ) {
+            return;
+        }
+
+        showErrorStatus(error);
+    }
+}
+
+searchInput.addEventListener("input", function () {
+
+    if (searchInput.value.trim() === "") {
+
+        searchRequestNumber++;
+
+        renderSearchHistory();
+    }
+});
+
+backBtn.addEventListener("click", function () {
+
+    window.location.href = "index.html";
+});
+
+searchBtn.addEventListener("click", function () {
+
+    performSearch();
+});
+
+searchInput.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+
+        event.preventDefault();
+
+        performSearch();
+    }
+});
+
+renderSearchHistory();
+
+window.addEventListener("load", function () {
+
+    searchInput.focus();
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta name="theme-color" content="#FFFFFF" />
+
+    <title>App Details - NX Store</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-primary: #FFFFFF;
+            --text-primary: #202124;
+            --text-secondary: #5F6368;
+            --text-tertiary: #9AA0A6;
+            --divider: #E0E0E0;
+            --divider-light: #EEEEEE;
+            --accent: #1A73E8;
+            --icon-bg: #F1F3F4;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+
+            --transition: .25s cubic-bezier(.4,0,.2,1);
+
+            --header-height: 64px;
+
+            --page-padding: clamp(16px, 4vw, 40px);
+            --section-gap: clamp(24px, 3.5vw, 36px);
+            --label-width: clamp(100px, 14vw, 140px);
+            --label-gap: clamp(12px, 2.4vw, 24px);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system,
+                BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+            background: var(--bg-primary);
+            color: var(--text-primary);
+
+            line-height: 1.6;
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+        }
+
+        button,
+        button:hover,
+        button:active,
+        button:focus,
+        button:focus-visible,
+        button:focus-within {
+            -webkit-appearance: none;
+            appearance: none;
+
+            -webkit-tap-highlight-color: transparent;
+
+            outline: none !important;
+            outline-offset: 0 !important;
+
+            box-shadow: none !important;
+            text-shadow: none !important;
+
+            transform: none !important;
+            animation: none !important;
+            transition: none !important;
+            filter: none !important;
+
+            background-image: none !important;
+        }
+
+        button {
+            font-family: inherit;
+
+            -webkit-tap-highlight-color: transparent;
+
+            user-select: none;
+            -webkit-user-select: none;
+
+            cursor: pointer;
+        }
+
+        button:hover,
+        button:active,
+        button:focus,
+        button:focus-visible {
+            background-color: transparent !important;
+        }
+
+        button svg,
+        button svg * {
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 640px;
+
+            margin: 0 auto;
+
+            padding: 0 var(--page-padding) clamp(48px, 6vw, 64px);
+
+            background: var(--bg-primary);
+
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: sticky;
+            top: 0;
+
+            z-index: 100;
+
+            background: var(--bg-primary);
+
+            padding: 10px 0;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            min-height: var(--header-height);
+
+            border-bottom: 1px solid var(--divider-light);
+
+            margin: 0 calc(-1 * var(--page-padding));
+
+            padding-left: var(--page-padding);
+            padding-right: var(--page-padding);
+        }
+
+        .header-back {
+            flex-shrink: 0;
+
+            width: clamp(40px, 8vw, 44px);
+            height: clamp(40px, 8vw, 44px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+
+            background: transparent;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            color: var(--text-primary);
+
+            touch-action: manipulation;
+        }
+
+        .header-back svg {
+            width: 24px;
+            height: 24px;
+
+            display: block;
+
+            fill: currentColor;
+            stroke: none;
+
+            color: inherit;
+        }
+
+        .header-icon-wrapper {
+            flex-shrink: 0;
+
+            width: 45px;
+            height:  45px;
+
+            border-radius: var(--radius-sm);
+
+            background: var(--icon-bg);
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+
+        .header-icon-wrapper img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+        .fallback-icon {
+            font-size: 26px;
+
+            color: var(--text-secondary);
+
+            user-select: none;
+        }
+
+        .header-info {
+            flex: 1;
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header-app-name {
+            font-size: clamp(16px, 3.2vw, 20px);
+
+            font-weight: 600;
+
+            color: var(--text-primary);
+
+            line-height: 1.3;
+
+            overflow-wrap: anywhere;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            gap: 2px 10px;
+
+            margin-top: 4px;
+
+            min-width: 0;
+        }
+
+        .app-tag {
+            display: inline;
+
+            padding: 0;
+            margin: 0;
+
+            border: none;
+            border-radius: 0;
+
+            background: transparent;
+
+            color: var(--text-secondary);
+
+            font-size: 11px;
+            font-weight: 400;
+
+            line-height: 1.5;
+
+            overflow-wrap: anywhere;
+        }
+
+        .section {
+            margin-top: var(--section-gap);
+        }
+
+        .section-divider {
+            border: 0;
+
+            height: 1px;
+
+            background: var(--divider-light);
+
+            margin: var(--section-gap) 0;
+        }
+
+        .section-heading {
+            font-size: clamp(18px, 3.4vw, 22px);
+
+            font-weight: 600;
+
+            color: var(--text-primary);
+
+            line-height: 1.3;
+
+            margin-bottom: 16px;
+
+            letter-spacing: -.01em;
+        }
+
+        .subsection {
+            margin-top: 22px;
+        }
+
+        .subsection:first-child {
+            margin-top: 0;
+        }
+
+        .subsection-heading {
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: var(--text-primary);
+
+            margin-bottom: 9px;
+
+            line-height: 1.5;
+        }
+
+        .about-content {
+            position: relative;
+
+            overflow: hidden;
+
+            transition: max-height .3s ease;
+        }
+
+        .about-content.collapsed {
+            max-height: var(--about-collapsed-height, none);
+        }
+
+        .about-content.expanded {
+            max-height: none;
+        }
+
+        .expandable-text {
+            font-size: clamp(15px, 2.5vw, 16px);
+
+            font-weight: 400;
+
+            color: var(--text-primary);
+
+            line-height: 1.7;
+
+            overflow-wrap: anywhere;
+
+            white-space: pre-wrap;
+        }
+
+        .about-toggle {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 9px;
+
+            padding: 5px 0;
+
+            border: none;
+
+            background: transparent;
+
+            color: var(--accent);
+
+            font-size: 13px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            touch-action: manipulation;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+
+            gap: 15px;
+        }
+
+        .info-row {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, var(--label-width))
+                minmax(0, 1fr);
+
+            column-gap: var(--label-gap);
+
+            align-items: start;
+
+            min-height: 24px;
+
+            width: 100%;
+        }
+
+        .info-label {
+            font-size: clamp(13px, 2.4vw, 15px);
+
+            font-weight: 400;
+
+            color: var(--text-secondary);
+
+            line-height: 1.5;
+
+            min-width: 0;
+
+            overflow-wrap: anywhere;
+        }
+
+        .info-value {
+            min-width: 0;
+            width: 100%;
+
+            font-size: clamp(13px, 2.4vw, 15px);
+
+            font-weight: 500;
+
+            color: var(--text-primary);
+
+            line-height: 1.5;
+
+            text-align: right;
+
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .permissions-row {
+            display: flex;
+            flex-direction: column;
+
+            width: 100%;
+            min-width: 0;
+
+            gap: 8px;
+        }
+
+        .permissions-heading {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            width: 100%;
+            min-width: 0;
+        }
+
+        .permissions-title {
+            flex: 1;
+            min-width: 0;
+
+            font-size: clamp(13px, 2.2vw, 14px);
+
+            font-weight: 400;
+
+            color: var(--text-secondary);
+
+            line-height: 1.5;
+
+            overflow-wrap: anywhere;
+        }
+
+        .permissions-toggle {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            gap: 4px;
+
+            padding: 5px 0;
+
+            border: none;
+
+            background: transparent;
+
+            color: var(--accent);
+
+            font-size: clamp(12px, 2.1vw, 13px);
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            touch-action: manipulation;
+        }
+
+        .permissions-arrow {
+            width: 15px;
+            height: 15px;
+
+            flex-shrink: 0;
+
+            stroke: currentColor;
+            stroke-width: 2;
+
+            fill: none;
+
+            stroke-linecap: round;
+            stroke-linejoin: round;
+
+            transition: none;
+        }
+
+        .permissions-toggle[aria-expanded="true"] .permissions-arrow {
+            transform: rotate(180deg) !important;
+        }
+
+        .permissions-toggle[aria-expanded="false"] .permissions-arrow {
+            transform: none !important;
+        }
+
+        .permissions-list-wrap {
+            width: 100%;
+            min-width: 0;
+
+            overflow: hidden;
+        }
+
+        .permissions-list-wrap.collapsed {
+            display: none;
+        }
+
+        .permissions-list-wrap.expanded {
+            display: block;
+        }
+
+        .permissions-list {
+            list-style: none;
+
+            padding: 0;
+            margin: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+        .permissions-list li {
+            display: block;
+
+            width: 100%;
+
+            font-size: 14px;
+
+            color: var(--text-primary);
+
+            line-height: 1.5;
+
+            padding: 2px 0;
+
+            text-align: left;
+
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .loading-indicator {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 12px 0;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+        }
+
+        .loading-spinner {
+            width: 15px;
+            height: 15px;
+
+            border: 2px solid var(--divider-light);
+
+            border-top-color: var(--accent);
+
+            border-radius: 50%;
+
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            padding: 16px;
+
+            margin-top: 24px;
+
+            background: #FFF4F3;
+
+            border-radius: var(--radius-md);
+
+            color: #B3261E;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        :focus,
+        :focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--divider);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="app" class="app-container">
+
+    <div id="root">
+
+        <header class="app-header" role="banner">
+
+            <button
+                type="button"
+                class="header-back"
+                data-action="back"
+                aria-label="Go back"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+
+            <div class="header-icon-wrapper">
+                <span class="fallback-icon" aria-hidden="true">📦</span>
+            </div>
+
+            <div class="header-info">
+
+                <div class="header-app-name">Untitled App</div>
+
+                <div
+                    id="tags-container"
+                    class="tags-container hidden"
+                    aria-label="App tags"
+                ></div>
+
+            </div>
+
+        </header>
+
+        <div
+            id="loading-indicator"
+            class="loading-indicator"
+            role="status"
+            aria-live="polite"
+        >
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <span>Loading app details…</span>
+        </div>
+
+        <div
+            id="error-container"
+            class="error-message hidden"
+            role="alert"
+        ></div>
+
+        <section id="about-section" class="section hidden">
+
+            <h2 class="section-heading">About this app</h2>
+
+            <div id="about-content" class="about-content expanded">
+
+                <div
+                    id="description-section"
+                    class="subsection hidden"
+                >
+                    <h3 class="subsection-heading">Description</h3>
+
+                    <div
+                        id="description-content"
+                        class="expandable-text"
+                    ></div>
+                </div>
+
+                <div
+                    id="release-notes-section"
+                    class="subsection hidden"
+                >
+                    <h3 class="subsection-heading">Release Notes</h3>
+
+                    <div
+                        id="release-notes-content"
+                        class="expandable-text"
+                    ></div>
+                </div>
+
+                <div
+                    id="data-safety-section"
+                    class="subsection hidden"
+                >
+                    <h3 class="subsection-heading">Data Safety</h3>
+
+                    <div
+                        id="data-safety-content"
+                        class="expandable-text"
+                    ></div>
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                id="about-toggle"
+                class="about-toggle hidden"
+                data-action="toggle-about"
+                aria-expanded="false"
+                aria-controls="about-content"
+            >
+                See More
+            </button>
+
+        </section>
+
+        <hr id="about-divider" class="section-divider hidden" />
+
+        <section id="info-section" class="section hidden">
+
+            <h2 class="section-heading">App info</h2>
+
+            <div id="info-grid" class="info-grid"></div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    const state = {
+        appData: null,
+        loading: true,
+        documentId: null,
+        appId: null,
+
+        permissionsOpen: false,
+
+        aboutExpanded: false,
+        aboutNeedsToggle: false,
+        aboutResizeObserver: null,
+        aboutResizeFrame: null
+    };
+
+    const root = document.getElementById("root");
+
+    const elements = {
+        headerName: root.querySelector(".header-app-name"),
+        headerIcon: root.querySelector(".header-icon-wrapper"),
+        tags: document.getElementById("tags-container"),
+
+        loading: document.getElementById("loading-indicator"),
+        error: document.getElementById("error-container"),
+
+        aboutSection: document.getElementById("about-section"),
+        aboutDivider: document.getElementById("about-divider"),
+        aboutContent: document.getElementById("about-content"),
+        aboutToggle: document.getElementById("about-toggle"),
+
+        descriptionSection: document.getElementById("description-section"),
+        descriptionContent: document.getElementById("description-content"),
+
+        releaseNotesSection: document.getElementById("release-notes-section"),
+        releaseNotesContent: document.getElementById("release-notes-content"),
+
+        dataSafetySection: document.getElementById("data-safety-section"),
+        dataSafetyContent: document.getElementById("data-safety-content"),
+
+        infoSection: document.getElementById("info-section"),
+        infoGrid: document.getElementById("info-grid")
+    };
+
+    const ABOUT_LINE_LIMIT = 10;
+
+    function logError(context, error) {
+        try {
+            console.error("[NX Store] " + context, {
+                name: error?.name || "UnknownError",
+                message: error?.message || String(error),
+                code: error?.code || null,
+                stack: error?.stack || null
+            });
+        } catch (_) {}
+    }
+
+    function hasValue(value) {
+        if (value === null || value === undefined) {
+            return false;
+        }
+
+        if (typeof value === "string") {
+            return value.trim().length > 0;
+        }
+
+        if (typeof value === "number") {
+            return Number.isFinite(value);
+        }
+
+        if (typeof value === "boolean") {
+            return true;
+        }
+
+        return false;
+    }
+
+    function normalizeText(value) {
+        if (typeof value !== "string") {
+            return null;
+        }
+
+        const text = value.trim();
+
+        return text.length ? text : null;
+    }
+
+    function safeExternalUrl(value) {
+        if (typeof value !== "string" || !value.trim()) {
+            return null;
+        }
+
+        try {
+            const url = new URL(value.trim());
+
+            if (
+                url.protocol !== "https:" &&
+                url.protocol !== "http:"
+            ) {
+                return null;
+            }
+
+            return url.href;
+
+        } catch (_) {
+            return null;
+        }
+    }
+
+    function isValidIdentifier(value) {
+        return (
+            typeof value === "string" &&
+            value.trim().length > 0
+        );
+    }
+
+    function formatDate(date) {
+        if (
+            !(date instanceof Date) ||
+            Number.isNaN(date.getTime())
+        ) {
+            return null;
+        }
+
+        return date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+    }
+
+    function formatUnixTimestamp(value) {
+        try {
+            let milliseconds;
+
+            if (value instanceof Date) {
+                return formatDate(value);
+            }
+
+            if (
+                value &&
+                typeof value.toDate === "function"
+            ) {
+                const date = value.toDate();
+
+                return formatDate(date);
+            }
+
+            if (
+                typeof value === "number" &&
+                Number.isFinite(value)
+            ) {
+                milliseconds = Math.abs(value) < 100000000000
+                    ? value * 1000
+                    : value;
+
+            } else if (
+                value &&
+                typeof value === "object" &&
+                typeof value.seconds === "number" &&
+                Number.isFinite(value.seconds)
+            ) {
+                const nanos = (
+                    typeof value.nanoseconds === "number" &&
+                    Number.isFinite(value.nanoseconds)
+                ) ? value.nanoseconds : 0;
+
+                milliseconds =
+                    value.seconds * 1000 +
+                    nanos / 1000000;
+
+            } else if (
+                value &&
+                typeof value === "object" &&
+                typeof value._seconds === "number" &&
+                Number.isFinite(value._seconds)
+            ) {
+                const nanos = (
+                    typeof value._nanoseconds === "number" &&
+                    Number.isFinite(value._nanoseconds)
+                ) ? value._nanoseconds : 0;
+
+                milliseconds =
+                    value._seconds * 1000 +
+                    nanos / 1000000;
+
+            } else {
+                return null;
+            }
+
+            if (!Number.isFinite(milliseconds)) {
+                return null;
+            }
+
+            const date = new Date(milliseconds);
+
+            if (Number.isNaN(date.getTime())) {
+                return null;
+            }
+
+            return formatDate(date);
+
+        } catch (error) {
+            logError("Timestamp conversion failed", error);
+            return null;
+        }
+    }
+
+    function normalizeStringArray(value) {
+        let items = [];
+
+        if (Array.isArray(value)) {
+            items = value;
+
+        } else if (
+            typeof value === "string" &&
+            value.trim()
+        ) {
+            items = value.split(",");
+        }
+
+        return items
+            .filter(item => typeof item === "string")
+            .map(item => item.trim())
+            .filter(Boolean);
+    }
+
+    function normalizeStars(value) {
+        if (
+            !Array.isArray(value) ||
+            value.length !== 5
+        ) {
+            return null;
+        }
+
+        const counts = [];
+
+        for (let i = 0; i < 5; i++) {
+            const count = value[i];
+
+            if (
+                typeof count !== "number" ||
+                !Number.isSafeInteger(count) ||
+                count < 0
+            ) {
+                return null;
+            }
+
+            counts.push(count);
+        }
+
+        return counts;
+    }
+
+    function calculateRating(stars) {
+        if (!Array.isArray(stars) || stars.length !== 5) {
+            return null;
+        }
+
+        const totalRatings = stars.reduce(
+            (total, count) => total + count,
+            0
+        );
+
+        if (!Number.isSafeInteger(totalRatings)) {
+            return null;
+        }
+
+        const weightedRating = stars.reduce(
+            (total, count, index) => {
+                return total + (index + 1) * count;
+            },
+            0
+        );
+
+        const overallRating = totalRatings > 0
+            ? weightedRating / totalRatings
+            : 0;
+
+        if (!Number.isFinite(overallRating)) {
+            return null;
+        }
+
+        return {
+            totalRatings,
+            overallRating
+        };
+    }
+
+    function validateAppMap(data) {
+        return (
+            data !== null &&
+            typeof data === "object" &&
+            !Array.isArray(data)
+        );
+    }
+
+    function mapFirestoreAppData(data) {
+        if (!validateAppMap(data)) {
+            return null;
+        }
+
+        return {
+            appName:
+                normalizeText(data.appName) || "Untitled App",
+
+            packageName:
+                normalizeText(data.packageName),
+
+            category:
+                normalizeText(data.category),
+
+            tags:
+                normalizeStringArray(data.tags),
+
+            description:
+                normalizeText(data.description),
+
+            releaseNotes:
+                normalizeText(data.releaseNotes),
+
+            dataSafety:
+                normalizeText(data.dataSafety),
+
+            permissions:
+                normalizeStringArray(data.permissions),
+
+            requiredOs:
+                normalizeText(data.requiredOs),
+
+            version:
+                normalizeText(data.version),
+
+            developer:
+                normalizeText(data.developer),
+
+            logoUrl:
+                safeExternalUrl(data.logoUrl),
+
+            screenshotUrls:
+                Array.isArray(data.screenshotUrls)
+                    ? data.screenshotUrls
+                        .map(safeExternalUrl)
+                        .filter(Boolean)
+                    : [],
+
+            appFileUrl:
+                safeExternalUrl(data.appFileUrl),
+
+            appDataSize:
+                normalizeText(data.appDataSize),
+
+            downloads: (
+                typeof data.downloads === "number" &&
+                Number.isSafeInteger(data.downloads) &&
+                data.downloads >= 0
+            ) ? data.downloads : null,
+
+            stars:
+                normalizeStars(data.stars),
+
+            updatedAt:
+                formatUnixTimestamp(data.updatedAt),
+
+            updatedOn:
+                formatUnixTimestamp(data.updatedOn)
+        };
+    }
+
+    function showFallbackIcon() {
+        elements.headerIcon.replaceChildren();
+
+        const fallback = document.createElement("span");
+
+        fallback.className = "fallback-icon";
+        fallback.setAttribute("aria-hidden", "true");
+        fallback.textContent = "📦";
+
+        elements.headerIcon.appendChild(fallback);
+    }
+
+    function renderHeader(app) {
+        elements.headerName.textContent =
+            app?.appName || "Untitled App";
+
+        elements.headerIcon.replaceChildren();
+
+        if (!app?.logoUrl) {
+            showFallbackIcon();
+            return;
+        }
+
+        const image = document.createElement("img");
+
+        image.alt = (app.appName || "App") + " icon";
+        image.loading = "lazy";
+        image.referrerPolicy = "no-referrer";
+
+        image.addEventListener(
+            "error",
+            showFallbackIcon,
+            { once: true }
+        );
+
+        image.src = app.logoUrl;
+
+        elements.headerIcon.appendChild(image);
+    }
+
+    function renderTags(tags) {
+        elements.tags.replaceChildren();
+
+        if (!tags || !tags.length) {
+            elements.tags.classList.add("hidden");
+            return;
+        }
+
+        tags.forEach(tag => {
+            const item = document.createElement("span");
+
+            item.className = "app-tag";
+            item.textContent = tag;
+
+            elements.tags.appendChild(item);
+        });
+
+        elements.tags.classList.remove("hidden");
+    }
+
+    function getAboutSections() {
+        return [
+            {
+                section: elements.descriptionSection,
+                content: elements.descriptionContent,
+                value: state.appData?.description
+            },
+            {
+                section: elements.releaseNotesSection,
+                content: elements.releaseNotesContent,
+                value: state.appData?.releaseNotes
+            },
+            {
+                section: elements.dataSafetySection,
+                content: elements.dataSafetyContent,
+                value: state.appData?.dataSafety
+            }
+        ];
+    }
+
+    function getCombinedAboutLines() {
+        const linePositions = new Set();
+
+        const walker = document.createTreeWalker(
+            elements.aboutContent,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    return node.nodeValue.trim()
+                        ? NodeFilter.FILTER_ACCEPT
+                        : NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+
+        let node;
+
+        while ((node = walker.nextNode())) {
+            const range = document.createRange();
+
+            range.selectNodeContents(node);
+
+            const rects = range.getClientRects();
+
+            for (const rect of rects) {
+                if (rect.height > 0) {
+                    linePositions.add(
+                        Math.round(rect.top * 2) / 2
+                    );
+                }
+            }
+
+            range.detach();
+        }
+
+        return Array.from(linePositions).sort(
+            (a, b) => a - b
+        );
+    }
+
+    function calculateAboutCollapsedHeight() {
+        const lines = getCombinedAboutLines();
+
+        if (lines.length <= ABOUT_LINE_LIMIT) {
+            return {
+                needsToggle: false,
+                height: 0
+            };
+        }
+
+        const targetLineBottom = lines[
+            ABOUT_LINE_LIMIT - 1
+        ];
+
+        const textNodes = [];
+
+        const walker = document.createTreeWalker(
+            elements.aboutContent,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    return node.nodeValue.trim()
+                        ? NodeFilter.FILTER_ACCEPT
+                        : NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+
+        let node;
+
+        while ((node = walker.nextNode())) {
+            const range = document.createRange();
+
+            range.selectNodeContents(node);
+
+            for (const rect of range.getClientRects()) {
+                if (
+                    Math.abs(
+                        rect.top - targetLineBottom
+                    ) < 1
+                ) {
+                    textNodes.push(rect.bottom);
+                }
+            }
+
+            range.detach();
+        }
+
+        const contentTop =
+            elements.aboutContent.getBoundingClientRect().top;
+
+        const bottom = textNodes.length
+            ? Math.max(...textNodes)
+            : targetLineBottom;
+
+        return {
+            needsToggle: true,
+            height: Math.max(0, bottom - contentTop)
+        };
+    }
+
+    function updateAboutExpansion() {
+        if (!state.appData) return;
+
+        if (elements.aboutSection.classList.contains("hidden")) {
+            return;
+        }
+
+        elements.aboutContent.classList.remove("collapsed");
+        elements.aboutContent.classList.add("expanded");
+
+        const result = calculateAboutCollapsedHeight();
+
+        state.aboutNeedsToggle = result.needsToggle;
+
+        if (!result.needsToggle) {
+            elements.aboutContent.style.setProperty(
+                "--about-collapsed-height",
+                "none"
+            );
+
+            elements.aboutContent.classList.remove("collapsed");
+            elements.aboutContent.classList.add("expanded");
+
+            elements.aboutToggle.classList.add("hidden");
+
+            elements.aboutToggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            return;
+        }
+
+        elements.aboutContent.style.setProperty(
+            "--about-collapsed-height",
+            result.height + "px"
+        );
+
+        if (state.aboutExpanded) {
+            elements.aboutContent.classList.remove("collapsed");
+            elements.aboutContent.classList.add("expanded");
+        } else {
+            elements.aboutContent.classList.remove("expanded");
+            elements.aboutContent.classList.add("collapsed");
+        }
+
+        elements.aboutToggle.textContent =
+            state.aboutExpanded ? "See Less" : "See More";
+
+        elements.aboutToggle.setAttribute(
+            "aria-expanded",
+            String(state.aboutExpanded)
+        );
+
+        elements.aboutToggle.classList.remove("hidden");
+    }
+
+    function scheduleAboutMeasurement() {
+        if (state.aboutResizeFrame !== null) {
+            cancelAnimationFrame(state.aboutResizeFrame);
+        }
+
+        state.aboutResizeFrame = requestAnimationFrame(() => {
+            state.aboutResizeFrame = null;
+            updateAboutExpansion();
+        });
+    }
+
+    function setupAboutResizeObserver() {
+        if (state.aboutResizeObserver) {
+            state.aboutResizeObserver.disconnect();
+        }
+
+        if (typeof ResizeObserver !== "undefined") {
+            state.aboutResizeObserver = new ResizeObserver(() => {
+                scheduleAboutMeasurement();
+            });
+
+            state.aboutResizeObserver.observe(
+                elements.aboutContent
+            );
+        }
+    }
+
+    function renderAbout(app) {
+        const sections = [
+            {
+                section: elements.descriptionSection,
+                content: elements.descriptionContent,
+                value: app.description
+            },
+            {
+                section: elements.releaseNotesSection,
+                content: elements.releaseNotesContent,
+                value: app.releaseNotes
+            },
+            {
+                section: elements.dataSafetySection,
+                content: elements.dataSafetyContent,
+                value: app.dataSafety
+            }
+        ];
+
+        let hasContent = false;
+
+        sections.forEach(item => {
+            item.content.replaceChildren();
+
+            if (!item.value) {
+                item.section.classList.add("hidden");
+                return;
+            }
+
+            hasContent = true;
+
+            item.section.classList.remove("hidden");
+
+            item.content.textContent = item.value;
+        });
+
+        elements.aboutSection.classList.toggle(
+            "hidden",
+            !hasContent
+        );
+
+        elements.aboutDivider.classList.toggle(
+            "hidden",
+            !hasContent
+        );
+
+        if (!hasContent) {
+            elements.aboutToggle.classList.add("hidden");
+            state.aboutNeedsToggle = false;
+
+            return;
+        }
+
+        elements.aboutContent.classList.remove("collapsed");
+        elements.aboutContent.classList.add("expanded");
+
+        elements.aboutToggle.classList.add("hidden");
+
+        scheduleAboutMeasurement();
+    }
+
+    function handleToggleAbout() {
+        if (!state.appData || !state.aboutNeedsToggle) {
+            return;
+        }
+
+        state.aboutExpanded = !state.aboutExpanded;
+
+        updateAboutExpansion();
+    }
+
+    function renderInfoRow(label, value) {
+        if (!hasValue(value)) {
+            return null;
+        }
+
+        const row = document.createElement("div");
+
+        row.className = "info-row";
+
+        const labelElement = document.createElement("span");
+
+        labelElement.className = "info-label";
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("span");
+
+        valueElement.className = "info-value";
+        valueElement.textContent = String(value);
+
+        row.appendChild(labelElement);
+        row.appendChild(valueElement);
+
+        elements.infoGrid.appendChild(row);
+
+        return row;
+    }
+
+    function createPermissionToggle(expanded) {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "permissions-toggle";
+        button.dataset.action = "toggle-permissions";
+
+        button.setAttribute(
+            "aria-expanded",
+            String(expanded)
+        );
+
+        button.setAttribute(
+            "aria-controls",
+            "perms-list-wrap"
+        );
+
+        const text = document.createElement("span");
+
+        text.textContent = expanded
+            ? "See Less"
+            : "See More";
+
+        const arrow = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+        arrow.setAttribute("viewBox", "0 0 24 24");
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.setAttribute("class", "permissions-arrow");
+
+        const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+        );
+
+        path.setAttribute("d", "m6 9 6 6 6-6");
+
+        arrow.appendChild(path);
+
+        button.appendChild(text);
+        button.appendChild(arrow);
+
+        return button;
+    }
+
+    function renderPermissions(permissions) {
+
+        const safePermissions = Array.isArray(permissions)
+            ? permissions
+                .filter(
+                    permission =>
+                        typeof permission === "string" &&
+                        permission.trim().length > 0
+                )
+                .map(permission => permission.trim())
+            : [];
+
+        const expanded = state.permissionsOpen === true;
+
+        const row = document.createElement("div");
+
+        row.className = "permissions-row";
+
+        const heading = document.createElement("div");
+
+        heading.className = "permissions-heading";
+
+        const label = document.createElement("span");
+
+        label.className = "permissions-title";
+        label.textContent = "App permissions";
+
+        heading.appendChild(label);
+
+        const toggle = createPermissionToggle(expanded);
+
+        heading.appendChild(toggle);
+
+        row.appendChild(heading);
+
+        const listWrap = document.createElement("div");
+
+        listWrap.id = "perms-list-wrap";
+
+        listWrap.className =
+            "permissions-list-wrap " +
+            (expanded ? "expanded" : "collapsed");
+
+        listWrap.setAttribute("role", "region");
+
+        listWrap.setAttribute(
+            "aria-label",
+            "App permissions list"
+        );
+
+        listWrap.setAttribute(
+            "aria-hidden",
+            String(!expanded)
+        );
+
+        const list = document.createElement("ul");
+
+        list.className = "permissions-list";
+
+        if (expanded) {
+            safePermissions.forEach(permission => {
+
+                const item = document.createElement("li");
+
+                item.textContent = permission;
+
+                list.appendChild(item);
+
+            });
+        }
+
+        listWrap.appendChild(list);
+
+        row.appendChild(listWrap);
+
+        elements.infoGrid.appendChild(row);
+    }
+
+    function renderInfo(app) {
+        elements.infoGrid.replaceChildren();
+
+        renderInfoRow(
+            "Version",
+            app.version
+        );
+
+        renderInfoRow(
+            "Updated at",
+            app.updatedAt
+        );
+
+        renderInfoRow(
+            "Updated on",
+            app.updatedOn
+        );
+
+        renderInfoRow(
+            "Download size",
+            app.appDataSize
+        );
+
+        renderInfoRow(
+            "Required OS",
+            app.requiredOs
+        );
+
+        renderInfoRow(
+            "Developer",
+            app.developer
+        );
+
+        renderInfoRow(
+            "Downloads",
+            app.downloads !== null
+                ? app.downloads.toLocaleString("en-US")
+                : null
+        );
+
+        const rating = calculateRating(app.stars);
+
+        if (rating) {
+            const ratingText =
+                rating.overallRating.toFixed(2) +
+                " (" +
+                rating.totalRatings.toLocaleString("en-US") +
+                (
+                    rating.totalRatings === 1
+                        ? " rating"
+                        : " ratings"
+                ) +
+                ")";
+
+            renderInfoRow(
+                "Rating",
+                ratingText
+            );
+        }
+
+        renderPermissions(app.permissions);
+
+        elements.infoSection.classList.toggle(
+            "hidden",
+            elements.infoGrid.children.length === 0
+        );
+    }
+
+    function render() {
+        elements.loading.classList.toggle(
+            "hidden",
+            !state.loading
+        );
+
+        const app = state.appData;
+
+        if (!app) {
+            renderHeader(null);
+
+            elements.tags.classList.add("hidden");
+
+            elements.aboutSection.classList.add("hidden");
+            elements.aboutDivider.classList.add("hidden");
+
+            elements.infoSection.classList.add("hidden");
+
+            return;
+        }
+
+        elements.error.classList.add("hidden");
+
+        renderHeader(app);
+
+        renderTags(app.tags);
+
+        renderAbout(app);
+
+        renderInfo(app);
+    }
+
+    function showErrorMessage(message) {
+        elements.error.textContent = message;
+
+        elements.error.classList.remove("hidden");
+    }
+
+    function handleBack() {
+        window.location.href = "download_page.html";
+    }
+
+    function handleTogglePermissions() {
+
+        if (!state.appData) {
+            return;
+        }
+
+        state.permissionsOpen = !state.permissionsOpen;
+
+        renderInfo(state.appData);
+    }
+
+    root.addEventListener("click", function (event) {
+
+        const clickedElement = event.target;
+
+        if (
+            !clickedElement ||
+            typeof clickedElement.closest !== "function"
+        ) {
+            return;
+        }
+
+        const target = clickedElement.closest("[data-action]");
+
+        if (!target || !root.contains(target)) {
+            return;
+        }
+
+        switch (target.dataset.action) {
+
+            case "back":
+                handleBack();
+                break;
+
+            case "toggle-about":
+                handleToggleAbout();
+                break;
+
+            case "toggle-permissions":
+                handleTogglePermissions();
+                break;
+        }
+    });
+
+    window.addEventListener(
+        "resize",
+        scheduleAboutMeasurement,
+        { passive: true }
+    );
+
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+            scheduleAboutMeasurement();
+        }).catch(error => {
+            logError("Font loading measurement failed", error);
+        });
+    }
+
+    setupAboutResizeObserver();
+
+    function getSelectedAppFromStorage() {
+        let rawValue;
+
+        try {
+            rawValue = localStorage.getItem("App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay");
+
+        } catch (error) {
+            throw new Error(
+                "Unable to access LocalStorage: " +
+                (error?.message || String(error))
+            );
+        }
+
+        if (!rawValue) {
+            throw new Error(
+                'LocalStorage key "App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay" data not found.'
+            );
+        }
+
+        let appIdData;
+
+        try {
+            appIdData = JSON.parse(rawValue);
+
+        } catch (_) {
+            throw new Error(
+                'LocalStorage key "App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay" contains invalid JSON.'
+            );
+        }
+
+        if (
+            !appIdData ||
+            typeof appIdData !== "object" ||
+            Array.isArray(appIdData)
+        ) {
+            throw new Error(
+                "Invalid App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay data structure."
+            );
+        }
+
+        const documentId = appIdData.documentId;
+        const mapField = appIdData.mapField;
+
+        if (!isValidIdentifier(documentId)) {
+            throw new Error(
+                "documentId is missing or invalid."
+            );
+        }
+
+        if (!isValidIdentifier(mapField)) {
+            throw new Error(
+                "mapField is missing or invalid."
+            );
+        }
+
+        return {
+            documentId: documentId.trim(),
+            appId: mapField.trim()
+        };
+    }
+
+    window.NXStore = {
+
+        setAppData: function (data) {
+            try {
+                const mappedData =
+                    mapFirestoreAppData(data);
+
+                if (!mappedData) {
+                    throw new Error(
+                        "Selected App Map contains invalid data."
+                    );
+                }
+
+                state.permissionsOpen = false;
+
+                state.appData = mappedData;
+
+                state.aboutExpanded = false;
+                state.aboutNeedsToggle = false;
+
+                console.log(
+                    "[NX Store] Selected App Map mapped successfully."
+                );
+
+                elements.error.classList.add("hidden");
+
+            } catch (error) {
+
+                logError(
+                    "App data mapping failed",
+                    error
+                );
+
+                state.appData = null;
+
+                state.permissionsOpen = false;
+
+                showErrorMessage(
+                    "Unable to display app details. The selected app data is invalid."
+                );
+
+            } finally {
+
+                state.loading = false;
+
+                render();
+            }
+        },
+
+        finishLoading: function () {
+            state.loading = false;
+
+            render();
+        },
+
+        setLoadingError: function (error) {
+            logError(
+                "App data loading failed",
+                error
+            );
+
+            state.appData = null;
+            state.permissionsOpen = false;
+            state.loading = false;
+
+            showErrorMessage(
+                "Unable to load app details. Please check your connection and try again."
+            );
+
+            render();
+        },
+
+        getState: function () {
+            return {
+                loading: state.loading,
+                appData: state.appData,
+                documentId: state.documentId,
+                appId: state.appId,
+                permissionsOpen: state.permissionsOpen,
+                aboutExpanded: state.aboutExpanded
+            };
+        },
+
+        setSelectedIdentifiers: function (
+            documentId,
+            appId
+        ) {
+            state.documentId = documentId;
+            state.appId = appId;
+        },
+
+        getSelectedAppFromStorage:
+            getSelectedAppFromStorage
+    };
+
+    state.loading = true;
+    state.appData = null;
+
+    state.permissionsOpen = false;
+
+    render();
+
+    console.log(
+        "[NX Store] Main application initialized."
+    );
+
+})();
+</script>
+
+<script type="module">
+"use strict";
+
+function logFirebaseError(context, error) {
+    try {
+        console.error("[NX Store] " + context, {
+            name: error?.name || "UnknownError",
+            message: error?.message || String(error),
+            code: error?.code || null,
+            stack: error?.stack || null
+        });
+    } catch (_) {}
+}
+
+async function initializeFirebase() {
+    try {
+        console.log(
+            "[NX Store] Loading existing Firebase connection..."
+        );
+
+        const [
+            firebaseModule,
+            firestoreModule
+        ] = await Promise.all([
+
+            import("./firebase.js"),
+
+            import(
+                "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"
+            )
+
+        ]);
+
+        const db = firebaseModule.db;
+
+        const {
+            doc,
+            getDoc
+        } = firestoreModule;
+
+        if (!db) {
+            throw new Error(
+                'The existing firebase.js file does not export "db".'
+            );
+        }
+
+        if (
+            typeof doc !== "function" ||
+            typeof getDoc !== "function"
+        ) {
+            throw new Error(
+                "Required Firestore functions could not be loaded."
+            );
+        }
+
+        console.log(
+            "[NX Store] Existing Firestore instance connected."
+        );
+
+        if (
+            !window.NXStore ||
+            typeof window.NXStore.getSelectedAppFromStorage !== "function"
+        ) {
+            throw new Error(
+                "NXStore application interface is unavailable."
+            );
+        }
+
+        const appIdData =
+            window.NXStore.getSelectedAppFromStorage();
+
+        const documentId = appIdData.documentId;
+
+        const mapField = appIdData.appId;
+
+        window.NXStore.setSelectedIdentifiers(
+            documentId,
+            mapField
+        );
+
+        console.log(
+            "[NX Store] documentId:",
+            documentId
+        );
+
+        console.log(
+            "[NX Store] mapField:",
+            mapField
+        );
+
+        const docRef = doc(
+            db,
+            "store",
+            documentId
+        );
+
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            throw new Error(
+                "Selected Firestore document not found."
+            );
+        }
+
+        const documentData = docSnap.data();
+
+        if (
+            !documentData ||
+            typeof documentData !== "object" ||
+            Array.isArray(documentData)
+        ) {
+            throw new Error(
+                "Firestore document contains an invalid structure."
+            );
+        }
+
+        const selectedAppMap =
+            documentData[mapField];
+
+        if (
+            !selectedAppMap ||
+            typeof selectedAppMap !== "object" ||
+            Array.isArray(selectedAppMap)
+        ) {
+            throw new Error(
+                "Selected App Map not found or contains invalid data."
+            );
+        }
+
+        window.NXStore.setAppData(
+            selectedAppMap
+        );
+
+        console.log(
+            "[NX Store] Firestore data loaded successfully."
+        );
+
+        console.log(
+            "[NX Store] Only the selected App Map was used."
+        );
+
+        console.log(
+            "[NX Store] Firestore operations: READ ONLY."
+        );
+
+    } catch (error) {
+
+        logFirebaseError(
+            "Firebase data loading failed",
+            error
+        );
+
+        if (
+            window.NXStore &&
+            typeof window.NXStore.setLoadingError === "function"
+        ) {
+            window.NXStore.setLoadingError(error);
+        }
+    }
+}
+
+initializeFirebase().catch(error => {
+
+    logFirebaseError(
+        "Unexpected Firebase initialization error",
+        error
+    );
+
+    if (
+        window.NXStore &&
+        typeof window.NXStore.setLoadingError === "function"
+    ) {
+        window.NXStore.setLoadingError(error);
+    }
+
+});
+
+</script>
+
+</body>
+</html>

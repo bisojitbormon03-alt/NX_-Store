@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+<title>App Details</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{background:#fff;color:#202124;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit}
+.app-container{width:100%;margin:0;padding:0 16px 48px}
+.top-nav{min-height:64px;display:flex;align-items:center;justify-content:space-between;background:#fff;gap:8px}
+.nav-right{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.nav-btn{width:44px;height:44px;min-width:44px;border:0;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;color:#202124;cursor:pointer;transition:background .15s ease,transform .1s ease;touch-action:manipulation}
+.nav-btn:hover{background:#f1f3f4}
+.nav-btn:active{transform:scale(.91);background:#e8eaed}
+.nav-btn:focus-visible{outline:2px solid #1a73e8;outline-offset:2px}
+.back-button-image{width:24px;height:24px;display:block;object-fit:contain;flex-shrink:0}
+.bookmark-icon{width:22px;height:27px;display:inline-block;background:transparent}
+.bookmark-icon svg{width:100%;height:100%;fill:none;stroke:#202124;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:fill .2s ease,stroke .2s ease;background:transparent}
+.bookmark-icon.saved svg{fill:#1a73e8;stroke:#1a73e8}
+.header-action-btn{
+width:44px;min-width:44px;height:44px;min-height:44px;padding:0;margin:0;
+border:0;border-radius:0;background:transparent;color:#202124;
+display:flex;flex:0 0 44px;align-items:center;justify-content:center;
+gap:0;font-size:0;font-weight:400;white-space:nowrap;cursor:pointer;
+box-shadow:none;outline:none;appearance:none;-webkit-appearance:none;
+transition:transform .12s ease;touch-action:manipulation;
+}
+.header-action-btn:hover,.header-action-btn:focus{background:transparent;border:0;box-shadow:none}
+.header-action-btn:active{background:transparent;border:0;box-shadow:none;transform:scale(.90)}
+.header-action-btn:focus-visible{outline:2px solid #1a73e8;outline-offset:2px}
+.header-action-btn svg{width:22px;height:22px;min-width:22px;display:block;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.top-nav.mobile-fixed{position:fixed;top:0;left:0;right:0;width:100%;z-index:99;background:#fff;padding-left:16px;padding-right:16px}
+.app-header{display:flex;align-items:flex-start;gap:16px;padding:8px 0 18px}
+.app-icon{width:82px;height:82px;flex:0 0 82px;border-radius:20px;overflow:hidden;background:#f1f3f4;box-shadow:0 2px 12px rgba(0,0,0,.08);position:relative}
+.app-icon img{width:100%;height:100%;display:block;object-fit:cover}
+.app-icon-placeholder,.image-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#70757a;background:#f1f3f4;font-size:13px;padding:10px}
+.app-info{min-width:0;padding-top:2px;flex:1}
+.app-name{font-size:21px;line-height:1.3;font-weight:700;overflow-wrap:anywhere;word-break:break-word}
+.category{margin-top:5px;color:#5f6368;font-size:14px}
+.info-row{display:flex;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;width:100%;min-height:78px;border:0;margin:4px 0;position:relative;z-index:15}
+.info-row::-webkit-scrollbar{display:none}
+.info-column{flex:1 0 auto;min-width:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0}
+.info-divider{width:1px;background:#dadce0;margin:16px 0;flex-shrink:0;display:block}
+.info-value{font-size:17px;font-weight:700;line-height:1.3}
+.info-label{margin-top:3px;color:#5f6368;font-size:11px;line-height:1.3}
+.install-wrap{padding:16px 0}
+.install-btn{width:100%;height:58px;border:0;border-radius:30px;background:#d2e3fc;color:#1557b0;font-size:17px;font-weight:700;cursor:pointer;transition:background .15s ease,transform .12s ease;font-family:inherit;touch-action:manipulation;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 12px;line-height:1.2}
+.install-btn:hover{background:#c4daf7}
+.install-btn:active{transform:scale(.97);background:#b7d0f2}
+.install-btn:focus-visible{outline:2px solid #1a73e8;outline-offset:3px}
+.install-btn:disabled{cursor:default;opacity:.85;transform:none!important}
+.install-btn:disabled:hover,.install-btn:disabled:active{background:#d2e3fc;transform:none!important}
+.responsive-ad-wrap{width:100%;display:flex;justify-content:center;align-items:center;margin:0;padding:0;min-height:0;height:0;overflow:hidden;transition:height .2s ease,margin .2s ease;position:relative}
+.responsive-ad-wrap.ad-visible{margin:8px 0 12px}
+.ad-slot{position:absolute;opacity:0;pointer-events:none;visibility:hidden;display:flex;justify-content:center;align-items:center;width:100%;height:0;overflow:hidden;left:0;right:0;margin:0 auto;transition:opacity .25s ease,visibility 0s .25s}
+.ad-slot.visible{position:relative;opacity:1;pointer-events:auto;visibility:visible;height:auto;transition:opacity .25s ease,visibility 0s}
+.ad-slot.visible.ad-slot--320,.ad-slot.visible.ad-slot--468,.ad-slot.visible.ad-slot--728{display:flex}
+.screenshot-section{position:relative;z-index:10;width:calc(100% + 32px);margin-left:-16px;margin-right:-16px;overflow:visible;margin-top:4px}
+.screenshot-scroll{position:relative;z-index:11;width:100%;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:4px 0 14px;scroll-behavior:smooth;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.screenshot-scroll::-webkit-scrollbar{display:none}
+.screenshot-card{flex:0 0 190px;width:190px;height:335px;border-radius:17px;overflow:hidden;background:#f1f3f4;border:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(0,0,0,.07);scroll-snap-align:start;position:relative;flex-shrink:0;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.screenshot-card:active{transform:scale(.96);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.screenshot-card img{width:100%;height:100%;display:block;object-fit:cover}
+.ratings-section{padding:8px 0 8px;border-top:0;margin:24px 0 0}
+.ratings-title{font-size:21px;font-weight:700;line-height:1.3;color:#202124;margin:0 0 14px}
+.ratings-layout{display:flex;gap:16px;align-items:stretch}
+.ratings-left{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;min-width:80px;padding-right:8px}
+.ratings-overall{font-size:50px;font-weight:700;line-height:1;color:#202124;letter-spacing:-.02em;transform:translateX(20px)}
+.ratings-stars{font-size:30px;color:#f9ab00;letter-spacing:2px;line-height:1.4;margin-top:2px}
+.ratings-count{font-size:20px;color:#5f6368;font-weight:400;margin-top:2px;line-height:1.3;transform:translateX(50px)}
+.ratings-right{flex:1;min-width:30px;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:2px 0}
+.rating-row{display:flex;align-items:center;gap:8px;height:24px}
+.rating-label{font-size:14px;font-weight:500;color:#3c4043;width:14px;flex-shrink:0;text-align:right;line-height:1}
+.rating-bar-track{flex:1;height:8px;background:#e8eaed;border-radius:20px;overflow:hidden;min-width:20px}
+.rating-bar-fill{height:100%;border-radius:20px;background:#f9ab00;width:0%;transition:width .4s ease}
+.rating-submit-container{margin-top:0;padding-top:10px;border-top:0;display:none;width:100%}
+.rating-submit-container.visible{display:block}
+.rating-submit-row{display:flex;align-items:center;justify-content:center;width:100%;min-width:0}
+.stars-container{display:flex;flex-direction:row;align-items:center;justify-content:space-evenly;width:100%;max-width:100%;flex:1 1 100%;min-width:0;gap:0;margin:0;padding:0;transform:none}
+.star-btn{border:0;background:transparent!important;font-size:50px;line-height:1;color:#dadce0;cursor:pointer;display:flex;flex:1 1 0;align-items:center;justify-content:center;touch-action:manipulation;padding:0;margin:0;font-weight:400;width:0;min-width:0;height:58px;min-height:50px;max-width:none;flex-shrink:1;transition:color .15s ease;-webkit-appearance:none;appearance:none}
+.star-btn:focus-visible{outline:2px solid #1a73e8;outline-offset:2px}
+.star-btn:hover,.star-btn:active{background:transparent!important}
+.star-btn:active{transform:none!important}
+.star-btn.active{color:#f9ab00}
+.star-btn:disabled{cursor:not-allowed;opacity:.45}
+.rating-confirm-backdrop{position:fixed;inset:0;z-index:10002;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,25,35,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease}
+.rating-confirm-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
+.rating-confirm-modal{width:100%;max-width:390px;background:#fff;border-radius:24px;padding:28px 22px 22px;text-align:center;box-shadow:0 20px 65px rgba(0,0,0,.25);transform:translateY(18px) scale(.97);transition:transform .25s cubic-bezier(.2,.8,.2,1);position:relative}
+.rating-confirm-backdrop.open .rating-confirm-modal{transform:translateY(0) scale(1)}
+.rating-confirm-logo{width:76px;height:76px;border-radius:19px;object-fit:cover;display:block;margin:0 auto 14px;background:#f1f3f4;box-shadow:0 3px 12px rgba(0,0,0,.10)}
+.rating-confirm-title{font-size:21px;line-height:1.35;font-weight:700;color:#202124;overflow-wrap:anywhere;margin-bottom:7px}
+.rating-confirm-description{font-size:14px;line-height:1.5;color:#5f6368;margin-bottom:18px}
+.rating-confirm-stars{display:flex;justify-content:center;align-items:center;gap:5px;margin:5px 0 10px}
+.rating-confirm-star{width:48px;height:54px;padding:0;border:0;background:transparent;color:#dadce0;font-size:43px;line-height:1;cursor:pointer;touch-action:manipulation;transition:color .15s ease,transform .15s ease}
+.rating-confirm-star.active{color:#f9ab00}
+.rating-confirm-star:active{transform:scale(.88)}
+.rating-confirm-star:focus-visible{outline:2px solid #1a73e8;outline-offset:1px;border-radius:7px}
+.rating-confirm-star:disabled{cursor:not-allowed;opacity:.55}
+.rating-confirm-value{min-height:22px;color:#5f6368;font-size:13px;margin-bottom:22px}
+.rating-confirm-actions{display:flex;gap:11px;width:100%}
+.rating-confirm-actions button{flex:1;height:46px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;touch-action:manipulation;transition:background .15s ease,transform .12s ease,opacity .15s ease}
+.rating-confirm-cancel{border:1px solid #dadce0;background:#fff;color:#3c4043}
+.rating-confirm-cancel:hover{background:#f8f9fa}
+.rating-confirm-submit{border:0;background:#1a73e8;color:#fff}
+.rating-confirm-submit:hover:not(:disabled){background:#1557b0}
+.rating-confirm-submit:disabled{opacity:.5;cursor:not-allowed}
+.rating-confirm-actions button:active:not(:disabled){transform:scale(.97)}
+.rating-confirm-actions button:focus-visible{outline:2px solid #1a73e8;outline-offset:3px}
+.rating-confirm-submit.loading{position:relative;color:transparent!important;pointer-events:none}
+.rating-confirm-submit.loading::after{content:"";position:absolute;width:19px;height:19px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:ratingSpinner .7s linear infinite}
+@keyframes ratingSpinner{to{transform:rotate(360deg)}}
+.rating-confirm-backdrop.submitting{pointer-events:none}
+.rating-confirm-backdrop.submitting .rating-confirm-modal{pointer-events:auto}
+.rating-confirm-backdrop.submitting .rating-confirm-star,.rating-confirm-backdrop.submitting .rating-confirm-cancel{pointer-events:none;opacity:.55}
+.about-section{margin-top:0}
+.about-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px;border-top:0}
+.about-title{font-size:21px;font-weight:700}
+.about-button{width:46px;height:46px;border:0;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s ease;touch-action:manipulation}
+.about-button:hover,.about-button:active{background:transparent}
+.about-button:active{transform:scale(.9)}
+.about-button:focus-visible{outline:2px solid #1a73e8;outline-offset:2px}
+.about-button .back-button-image{width:24px;height:24px;object-fit:contain;display:block;flex-shrink:0;transform:scaleX(-1)}
+.about-description{font-size:28px;font-weight:600;line-height:1.3;color:#1e1e1e;padding:4px 0 8px;letter-spacing:-.01em;word-break:break-word}
+.data-safety-section{margin:26px 0 8px;padding-top:0;border-top:0}
+.data-safety-title{font-size:21px;font-weight:700;line-height:1.3;color:#202124;margin:0 0 10px}
+.data-safety-description{font-size:14px;font-weight:400;line-height:1.6;color:#5f6368;margin:0;word-break:break-word}
+.about-detail{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .35s ease}
+.about-detail.open{max-height:1200px;opacity:1}
+.about-content{background:#f8f9fa;border-radius:16px;padding:20px;margin:8px 0 10px}
+.about-content h3{font-size:16px;font-weight:600;margin:15px 0 6px;color:#1e1e1e}
+.about-content h3:first-child{margin-top:0}
+.about-content p,.about-content li{color:#3c4043;font-size:14px;line-height:1.65}
+.about-content ul{padding-left:20px;margin:4px 0 8px}
+.about-content li{margin:4px 0}
+.meta{display:flex;flex-wrap:wrap;gap:10px 25px;margin-top:16px;padding-top:14px;border-top:0;color:#5f6368;font-size:13px}
+.meta strong{color:#1e1e1e;font-weight:600}
+.screenshot-viewer{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;visibility:hidden;opacity:0;transition:opacity .25s ease,visibility 0s .25s}
+.screenshot-viewer.open{visibility:visible;opacity:1;transition:opacity .25s ease,visibility 0s}
+.screenshot-viewer-track{display:flex;height:100%;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none}
+.screenshot-viewer-track::-webkit-scrollbar{display:none}
+.screenshot-viewer-slide{flex:0 0 100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;background:#000;touch-action:pan-y}
+.screenshot-viewer-slide img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.screenshot-viewer-back{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;z-index:20;width:46px;height:46px;border:0;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);transform:translateY(-100%);opacity:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s ease;touch-action:manipulation}
+.screenshot-viewer-back .back-button-image{width:24px;height:24px;object-fit:contain;display:block;filter:brightness(0) invert(1)}
+.screenshot-viewer-back.visible{transform:translateY(0);opacity:1}
+.screenshot-viewer-back:hover{background:rgba(255,255,255,.2)}
+.screenshot-viewer-back:active{transform:scale(.92)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#323232;color:#fff;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:500;z-index:10000;opacity:0;visibility:hidden;transition:opacity .3s ease,transform .3s ease,visibility 0s .3s;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:90vw;text-align:center;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);transition:opacity .3s ease,transform .3s ease,visibility 0s}
+.content-error{padding:60px 20px;text-align:center;color:#5f6368}
+.content-error .error-icon{font-size:48px;line-height:1;margin-bottom:12px}
+.content-error .error-title{font-size:18px;font-weight:600;color:#202124;margin-bottom:6px}
+.content-error .error-message{font-size:15px;color:#5f6368;max-width:320px;margin:0 auto 16px}
+.content-error .error-retry-btn{padding:10px 28px;border:0;border-radius:20px;background:#1a73e8;color:#fff;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s ease,transform .12s ease}
+.content-error .error-retry-btn:hover{background:#1557b0}
+.content-error .error-retry-btn:active{transform:scale(.96)}
+.modal-backdrop{position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:10001}
+.modal{background:#fff;border-radius:16px;max-width:90%;width:380px;padding:24px 28px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+.modal h3{font-size:20px;margin-bottom:10px;color:#202124}
+.modal p{font-size:15px;color:#5f6368;margin-bottom:20px;line-height:1.5}
+.modal button{padding:10px 28px;border:0;border-radius:20px;background:#1a73e8;color:#fff;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s ease}
+.modal button:hover{background:#1557b0}
+#pageLoader{position:fixed;inset:0;width:100%;height:100%;background:#fff;z-index:999999;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .15s ease,visibility .15s ease}
+#pageLoader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="pageLoader" aria-hidden="true"></div>
+<div id="toast" class="toast">Link copied.</div>
+
+<div class="rating-confirm-backdrop" id="ratingConfirmationModal"
+     role="dialog" aria-modal="true" aria-labelledby="ratingConfirmTitle"
+     aria-hidden="true">
+<div class="rating-confirm-modal">
+    <img id="ratingConfirmLogo" class="rating-confirm-logo" alt="Application logo">
+    <h3 class="rating-confirm-title" id="ratingConfirmTitle">Rate this app</h3>
+    <p class="rating-confirm-description">How would you rate this application?</p>
+    <div class="rating-confirm-stars" id="ratingConfirmStars">
+        <button type="button" class="rating-confirm-star" data-rating="1" aria-label="Rate 1 star">☆</button>
+        <button type="button" class="rating-confirm-star" data-rating="2" aria-label="Rate 2 stars">☆</button>
+        <button type="button" class="rating-confirm-star" data-rating="3" aria-label="Rate 3 stars">☆</button>
+        <button type="button" class="rating-confirm-star" data-rating="4" aria-label="Rate 4 stars">☆</button>
+        <button type="button" class="rating-confirm-star" data-rating="5" aria-label="Rate 5 stars">☆</button>
+    </div>
+    <div class="rating-confirm-value" id="ratingConfirmValue" aria-live="polite">Select your rating</div>
+    <div class="rating-confirm-actions">
+        <button type="button" class="rating-confirm-cancel" id="ratingConfirmCancel">Cancel</button>
+        <button type="button" class="rating-confirm-submit" id="ratingConfirmSubmit" disabled>Submit Rating</button>
+    </div>
+</div>
+</div>
+
+<div class="app-container">
+<header class="top-nav" aria-label="App navigation">
+    <button class="nav-btn" id="backBtn" aria-label="Go back" type="button">
+        <svg class="back-button-image" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+    <div class="nav-right">
+        <button class="nav-btn" id="bookmarkBtn" aria-label="Save app" type="button">
+            <span class="bookmark-icon" id="bookmarkIcon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+            </span>
+        </button>
+        <button class="header-action-btn" id="shareBtn" type="button" aria-label="Share this app" title="Share this app">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
+                <path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"></path>
+            </svg>
+        </button>
+        <button class="header-action-btn" id="copyLinkBtn" type="button" aria-label="Copy app link" title="Copy app link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<div class="app-header">
+    <div class="app-icon" id="appIcon"><img id="appIconImage" alt="Application icon" /></div>
+    <div class="app-info">
+        <h1 class="app-name" id="appName"></h1>
+        <div class="category" id="category"></div>
+    </div>
+</div>
+
+<section class="info-row" aria-label="Application information">
+    <div class="info-column"><div class="info-value" id="rating"></div><div class="info-label" id="reviews"></div></div>
+    <div class="info-divider" role="separator" aria-hidden="true"></div>
+    <div class="info-column"><div class="info-value" id="appSize"></div><div class="info-label">App size</div></div>
+    <div class="info-divider" role="separator" aria-hidden="true"></div>
+    <div class="info-column"><div class="info-value" id="downloads"></div><div class="info-label">Downloads</div></div>
+    <div class="info-divider" role="separator" aria-hidden="true"></div>
+    <div class="info-column"><div class="info-value" id="version"></div><div class="info-label">Version</div></div>
+</section>
+
+<div class="install-wrap"><button class="install-btn" id="installBtn">Install</button></div>
+<div class="responsive-ad-wrap" id="responsiveAdWrap" aria-label="Advertisement"></div>
+
+<section class="screenshot-section" aria-label="Application screenshots">
+    <div class="screenshot-scroll" id="screenshotScroll" tabindex="0" role="region" aria-label="Screenshot carousel. Use left/right arrow keys to scroll."></div>
+</section>
+
+<section class="ratings-section" id="ratingsSection" aria-label="App ratings">
+    <h2 class="ratings-title">Ratings</h2>
+    <div class="ratings-layout" id="ratingsLayout">
+        <div class="ratings-left" id="ratingsLeft">
+            <div class="ratings-overall" id="ratingsOverall">—</div>
+            <div class="ratings-stars" id="ratingsStars">☆☆☆☆☆</div>
+            <div class="ratings-count" id="ratingsCount">—</div>
+        </div>
+        <div class="ratings-right" id="ratingsRight"></div>
+    </div>
+    <div class="rating-submit-container" id="ratingSubmitContainer">
+        <div class="rating-submit-row">
+            <div class="stars-container" id="starsContainer">
+                <button type="button" class="star-btn" data-rating="1" aria-label="Rate 1 star">☆</button>
+                <button type="button" class="star-btn" data-rating="2" aria-label="Rate 2 stars">☆</button>
+                <button type="button" class="star-btn" data-rating="3" aria-label="Rate 3 stars">☆</button>
+                <button type="button" class="star-btn" data-rating="4" aria-label="Rate 4 stars">☆</button>
+                <button type="button" class="star-btn" data-rating="5" aria-label="Rate 5 stars">☆</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="about-header">
+        <h2 class="about-title">About this app</h2>
+        <button class="about-button" id="aboutButton" aria-label="Show more information" aria-expanded="false">
+            <svg class="back-button-image" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="about-description" id="aboutDescription"></div>
+    <div class="data-safety-section" id="dataSafetySection">
+        <h2 class="data-safety-title">Data safety</h2>
+        <p class="data-safety-description" id="dataSafetyDescription"></p>
+    </div>
+    <div class="about-detail" id="aboutDetail"><div class="about-content" id="aboutContent"></div></div>
+</section>
+
+<div id="contentErrorContainer"></div>
+</div>
+
+<div class="screenshot-viewer" id="screenshotViewer" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+    <button class="screenshot-viewer-back" id="screenshotViewerBack" aria-label="Close screenshot viewer">
+        <svg class="back-button-image" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </button>
+    <div class="screenshot-viewer-track" id="screenshotViewerTrack"></div>
+</div>
+
+<script type="module">
+import { db } from "./firebase.js";
+
+import {
+    doc,
+    getDoc,
+    updateDoc,
+    increment
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+const RATING_API_URL = "https://rating-backend-yth8.onrender.com/api/app/rating";
+
+const FALLBACK_LOGO = 'logo.jpg';
+const FALLBACK_SCREENSHOT = 'screen.jpg';
+
+const STATIC_FEATURES = [
+    "Mobile-friendly application interface",
+    "Fast and responsive experience",
+    "Simple and clean user interface",
+    "Touch-friendly controls",
+    "Public image URL loading test"
+];
+
+const STATIC_PRIVACY = "This is demo content for the application details page. Replace this section with your actual privacy and safety information.";
+
+const $ = (id) => document.getElementById(id);
+
+const dom = {
+    appName: $('appName'),
+    category: $('category'),
+    rating: $('rating'),
+    reviews: $('reviews'),
+    appSize: $('appSize'),
+    downloads: $('downloads'),
+    version: $('version'),
+    appIconImage: $('appIconImage'),
+    appIcon: $('appIcon'),
+    screenshotScroll: $('screenshotScroll'),
+    screenshotViewer: $('screenshotViewer'),
+    screenshotViewerTrack: $('screenshotViewerTrack'),
+    screenshotViewerBack: $('screenshotViewerBack'),
+    ratingsOverall: $('ratingsOverall'),
+    ratingsStars: $('ratingsStars'),
+    ratingsCount: $('ratingsCount'),
+    ratingsRight: $('ratingsRight'),
+    aboutDescription: $('aboutDescription'),
+    dataSafetyDescription: $('dataSafetyDescription'),
+    aboutContent: $('aboutContent'),
+    aboutDetail: $('aboutDetail'),
+    aboutButton: $('aboutButton'),
+    installBtn: $('installBtn'),
+    ratingSubmitContainer: $('ratingSubmitContainer'),
+    starsContainer: $('starsContainer'),
+    backBtn: $('backBtn'),
+    bookmarkBtn: $('bookmarkBtn'),
+    bookmarkIcon: $('bookmarkIcon'),
+    shareBtn: $('shareBtn'),
+    copyLinkBtn: $('copyLinkBtn'),
+    toast: $('toast'),
+    contentErrorContainer: $('contentErrorContainer'),
+    responsiveAdWrap: $('responsiveAdWrap'),
+    ratingConfirmationModal: $('ratingConfirmationModal'),
+    ratingConfirmLogo: $('ratingConfirmLogo'),
+    ratingConfirmTitle: $('ratingConfirmTitle'),
+    ratingConfirmStars: $('ratingConfirmStars'),
+    ratingConfirmValue: $('ratingConfirmValue'),
+    ratingConfirmSubmit: $('ratingConfirmSubmit'),
+    ratingConfirmCancel: $('ratingConfirmCancel')
+};
+
+let currentDocumentId = null;
+let currentMapField = null;
+let currentAppData = null;
+let screenshotUrls = [];
+
+function isValidIdentifier(value) {
+    return typeof value === 'string' &&
+        value.trim().length > 0 &&
+        value.trim() === value;
+}
+
+function getCurrentAppKey() {
+    if (!isValidIdentifier(currentDocumentId) ||
+        !isValidIdentifier(currentMapField)) {
+        return null;
+    }
+    return `${currentDocumentId}::${currentMapField}`;
+}
+
+function saveCurrentAppId(documentId, appsId) {
+    if (!isValidIdentifier(documentId) || !isValidIdentifier(appsId)) {
+        throw new Error('Invalid app identifiers.');
+    }
+    const appId = {
+        documentId: documentId,
+        appsId: appsId,
+        mapField: appsId
+    };
+    localStorage.setItem('App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay', JSON.stringify(appId));
+}
+
+function readCurrentAppId() {
+    const raw = localStorage.getItem('App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay');
+    if (!raw) return null;
+
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    } catch (_) {
+        return null;
+    }
+
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return null;
+    }
+
+    const documentId = parsed.documentId;
+    const appsId = parsed.appsId || parsed.mapField;
+
+    if (!isValidIdentifier(documentId) || !isValidIdentifier(appsId)) {
+        return null;
+    }
+
+    saveCurrentAppId(documentId, appsId);
+    return { documentId, mapField: appsId };
+}
+
+function getRatedApps() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem('Rated_apps') || '{"apps":[]}');
+        if (!parsed || !Array.isArray(parsed.apps)) return { apps: [] };
+        return { apps: parsed.apps.filter(item => typeof item === 'string') };
+    } catch (_) {
+        return { apps: [] };
+    }
+}
+
+function saveRatedApps(appsArray) {
+    if (!Array.isArray(appsArray)) appsArray = [];
+    localStorage.setItem('Rated_apps', JSON.stringify({ apps: appsArray }));
+}
+
+function hasUserRatedApp(appKey = getCurrentAppKey()) {
+    if (!appKey) return false;
+    return getRatedApps().apps.includes(appKey);
+}
+
+function markAppAsRated(appKey = getCurrentAppKey()) {
+    if (!appKey) return;
+    const rated = getRatedApps();
+    if (!rated.apps.includes(appKey)) {
+        rated.apps.push(appKey);
+        saveRatedApps(rated.apps);
+    }
+}
+
+function getDownloadedApps() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem('Downloaded_apps') || '{"apps":[]}');
+        if (!parsed || !Array.isArray(parsed.apps)) return { apps: [] };
+        return { apps: parsed.apps.filter(item => typeof item === 'string') };
+    } catch (_) {
+        return { apps: [] };
+    }
+}
+
+function saveDownloadedApps(appsArray) {
+    if (!Array.isArray(appsArray)) appsArray = [];
+    localStorage.setItem('Downloaded_apps', JSON.stringify({ apps: appsArray }));
+}
+
+function hasUserDownloadedApp(appKey = getCurrentAppKey()) {
+    if (!appKey) return false;
+    return getDownloadedApps().apps.includes(appKey);
+}
+
+function markAppAsDownloaded(appKey = getCurrentAppKey()) {
+    if (!appKey) return;
+    const downloaded = getDownloadedApps();
+    if (!downloaded.apps.includes(appKey)) {
+        downloaded.apps.push(appKey);
+        saveDownloadedApps(downloaded.apps);
+    }
+}
+
+let toastTimeout = null;
+
+function showToast(message) {
+    if (!dom.toast) return;
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        toastTimeout = null;
+    }
+    dom.toast.textContent = message || 'Link copied.';
+    dom.toast.classList.add('show');
+    toastTimeout = setTimeout(() => {
+        dom.toast.classList.remove('show');
+        toastTimeout = null;
+    }, 2500);
+}
+
+function getSavedApps() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem('Save_apps_ENYW1QoR2Dw_9Bwql4OBqUoBOay') || '{"apps":[]}');
+        if (!parsed || !Array.isArray(parsed.apps)) return { apps: [] };
+        return { apps: parsed.apps.filter(item => typeof item === 'string') };
+    } catch (_) {
+        return { apps: [] };
+    }
+}
+
+function saveSavedApps(appsArray) {
+    if (!Array.isArray(appsArray)) appsArray = [];
+    localStorage.setItem('Save_apps_ENYW1QoR2Dw_9Bwql4OBqUoBOay', JSON.stringify({ apps: appsArray }));
+}
+
+function isAppSaved(appKey = getCurrentAppKey()) {
+    if (!appKey) return false;
+    return getSavedApps().apps.includes(appKey);
+}
+
+function setBookmarkState(isSaved) {
+    dom.bookmarkIcon.classList.toggle('saved', isSaved);
+    dom.bookmarkBtn.setAttribute('aria-label', isSaved ? 'Remove app from saved' : 'Save app');
+}
+
+function restoreBookmarkState() {
+    setBookmarkState(isAppSaved());
+}
+
+function toggleSaveApp() {
+    const appKey = getCurrentAppKey();
+    if (!appKey) return;
+
+    const saved = getSavedApps();
+    const index = saved.apps.indexOf(appKey);
+
+    if (index === -1) {
+        saved.apps.push(appKey);
+        saveSavedApps(saved.apps);
+        setBookmarkState(true);
+    } else {
+        saved.apps.splice(index, 1);
+        saveSavedApps(saved.apps);
+        setBookmarkState(false);
+    }
+}
+
+function createImagePlaceholder(text) {
+    const div = document.createElement("div");
+    div.className = "image-placeholder";
+    div.textContent = text;
+    return div;
+}
+
+function safeStr(val) {
+    return val !== undefined && val !== null ? String(val) : "";
+}
+
+function safeNum(val) {
+    const n = Number(val);
+    return Number.isFinite(n) ? n : 0;
+}
+
+function safeArr(val) {
+    return Array.isArray(val) ? val : [];
+}
+
+function formatNumber(num) {
+    if (num === undefined || num === null || isNaN(num)) return "0";
+    const n = Number(num);
+    if (!isFinite(n)) return "0";
+    if (n >= 1e7) return (n / 1e7).toFixed(1) + "Cr+";
+    if (n >= 1e5) return (n / 1e5).toFixed(1) + "L+";
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + "K+";
+    return String(n);
+}
+
+function normalizeStars(value) {
+    const result = [0, 0, 0, 0, 0];
+    if (!Array.isArray(value)) return result;
+    for (let i = 0; i < 5; i++) {
+        const n = Number(value[i]);
+        result[i] = (Number.isFinite(n) && n > 0) ? Math.floor(n) : 0;
+    }
+    return result;
+}
+
+function calculateReviewCount(stars) {
+    return normalizeStars(stars).reduce((sum, count) => sum + count, 0);
+}
+
+function calculateAverageRating(stars) {
+    const safeStars = normalizeStars(stars);
+    const reviewCount = safeStars.reduce((sum, count) => sum + count, 0);
+    return reviewCount > 0
+        ? safeStars.reduce((sum, count, index) => sum + count * (index + 1), 0) / reviewCount
+        : 0;
+}
+
+function calculateStarPercentage(starCount, reviewCount) {
+    return reviewCount > 0 ? (starCount / reviewCount) * 100 : 0;
+}
+
+function getStars(rating) {
+    const filled = Math.min(Math.max(Math.round(safeNum(rating)), 0), 5);
+    return "★".repeat(filled) + "☆".repeat(5 - filled);
+}
+
+function renderAppHeader(data) {
+    const name = safeStr(data.appName);
+    dom.appName.textContent = name || "Untitled App";
+    dom.category.textContent = safeStr(data.category) || "Uncategorized";
+
+    const img = dom.appIconImage;
+    const container = dom.appIcon;
+    const oldPlaceholder = container.querySelector('.app-icon-placeholder');
+    if (oldPlaceholder) oldPlaceholder.remove();
+
+    img.style.display = '';
+    img.alt = (name || 'App') + ' app icon';
+
+    let fallbackUsed = false;
+    img.onerror = function() {
+        if (!fallbackUsed) {
+            fallbackUsed = true;
+            this.src = FALLBACK_LOGO;
+            return;
+        }
+        this.onerror = null;
+        this.style.display = 'none';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'app-icon-placeholder';
+        placeholder.textContent = 'Image unavailable';
+        container.appendChild(placeholder);
+    };
+    img.src = safeStr(data.logoUrl) || FALLBACK_LOGO;
+}
+
+function renderScreenshots(urls) {
+    const scroll = dom.screenshotScroll;
+    const viewerTrack = dom.screenshotViewerTrack;
+    const appName = safeStr(currentAppData?.appName) || "App";
+
+    scroll.innerHTML = '';
+    viewerTrack.innerHTML = '';
+    screenshotUrls = safeArr(urls);
+
+    if (screenshotUrls.length === 0) {
+        const msg = document.createElement('div');
+        msg.style.cssText = 'padding:20px 0;color:#70757a;font-size:14px;text-align:center;width:100%;';
+        msg.textContent = 'No screenshots available';
+        scroll.appendChild(msg);
+        return;
+    }
+
+    screenshotUrls.forEach((url, idx) => {
+        const card = document.createElement("div");
+        card.className = "screenshot-card";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = appName + " screenshot " + (idx + 1);
+        img.loading = idx === 0 ? "eager" : "lazy";
+
+        img.onerror = function() {
+            if (this.src.endsWith(FALLBACK_SCREENSHOT)) {
+                this.onerror = null;
+                this.remove();
+                card.appendChild(createImagePlaceholder("Image unavailable"));
+                return;
+            }
+            this.src = FALLBACK_SCREENSHOT;
+        };
+
+        card.appendChild(img);
+        card.addEventListener('click', () => openScreenshotViewer(idx));
+        scroll.appendChild(card);
+    });
+
+    screenshotUrls.forEach((url) => {
+        const slide = document.createElement('div');
+        slide.className = 'screenshot-viewer-slide';
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Screenshot';
+        img.loading = 'lazy';
+
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = FALLBACK_SCREENSHOT;
+        };
+
+        slide.appendChild(img);
+        viewerTrack.appendChild(slide);
+    });
+}
+
+function renderRatings(data) {
+    const stars = normalizeStars(data.stars);
+    const reviews = calculateReviewCount(stars);
+    const ratingVal = calculateAverageRating(stars);
+
+    dom.ratingsOverall.textContent = reviews > 0 ? ratingVal.toFixed(1) : "—";
+    dom.ratingsStars.textContent = reviews > 0 ? getStars(ratingVal) : "☆☆☆☆☆";
+    dom.ratingsCount.textContent = reviews > 0 ? formatNumber(reviews) : "No reviews";
+
+    const starCounts = {
+        1: stars[0],
+        2: stars[1],
+        3: stars[2],
+        4: stars[3],
+        5: stars[4]
+    };
+
+    const levels = [5, 4, 3, 2, 1];
+    dom.ratingsRight.innerHTML = '';
+
+    levels.forEach(level => {
+        const val = starCounts[level] || 0;
+        const pct = calculateStarPercentage(val, reviews);
+
+        const row = document.createElement("div");
+        row.className = "rating-row";
+
+        const label = document.createElement("span");
+        label.className = "rating-label";
+        label.textContent = level;
+        row.appendChild(label);
+
+        const track = document.createElement("div");
+        track.className = "rating-bar-track";
+
+        const fill = document.createElement("div");
+        fill.className = "rating-bar-fill";
+        fill.style.width = pct + "%";
+        fill.setAttribute('data-value', val);
+
+        track.appendChild(fill);
+        row.appendChild(track);
+        dom.ratingsRight.appendChild(row);
+    });
+}
+
+function renderAbout(data) {
+    const releaseNotes = safeStr(data.releaseNotes);
+
+    dom.aboutDescription.textContent = releaseNotes || "No description available.";
+    dom.dataSafetyDescription.textContent =
+        safeStr(data.dataSafety) || "No data safety information provided.";
+
+    const permissions = safeStr(data.permissions);
+    const version = safeStr(data.version);
+    const category = safeStr(data.category);
+
+    let html = '';
+    html += `<h3>Description</h3><p>${escapeHtml(releaseNotes || "No description available.")}</p>`;
+
+    if (permissions) {
+        html += `<h3>Permissions</h3><p>${escapeHtml(permissions)}</p>`;
+    }
+
+    html += '<h3>Key Features</h3><ul>';
+    STATIC_FEATURES.forEach(feature => {
+        html += `<li>${escapeHtml(feature)}</li>`;
+    });
+    html += '</ul>';
+
+    html += `<h3>Privacy & Safety</h3><p>${escapeHtml(STATIC_PRIVACY)}</p>`;
+    html += '<div class="meta">';
+    html += `<span><strong>Version:</strong> ${escapeHtml(version || "—")}</span>`;
+    html += `<span><strong>Category:</strong> ${escapeHtml(category || "—")}</span>`;
+    html += '</div>';
+
+    dom.aboutContent.innerHTML = html;
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+let isViewerOpen = false;
+let previousOverflow = '';
+
+function openScreenshotViewer(index) {
+    if (isViewerOpen || screenshotUrls.length === 0) return;
+    isViewerOpen = true;
+
+    const safeIndex = Math.max(0, Math.min(index, screenshotUrls.length - 1));
+
+    previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dom.screenshotViewer.classList.add('open');
+
+    dom.screenshotViewerTrack.scrollTo({
+        left: safeIndex * window.innerWidth,
+        behavior: 'instant'
+    });
+
+    void dom.screenshotViewerBack.offsetWidth;
+    dom.screenshotViewerBack.classList.add('visible');
+}
+
+function closeScreenshotViewer() {
+    if (!isViewerOpen) return;
+    isViewerOpen = false;
+    dom.screenshotViewerBack.classList.remove('visible');
+    dom.screenshotViewer.classList.remove('open');
+    document.body.style.overflow = previousOverflow;
+}
+
+dom.screenshotViewerBack.addEventListener('click', closeScreenshotViewer);
+
+document.addEventListener('keydown', (e) => {
+    if (isViewerOpen) {
+        if (e.key === 'Escape') {
+            closeScreenshotViewer();
+            e.preventDefault();
+        }
+        if (e.key === 'ArrowLeft') {
+            dom.screenshotViewerTrack.scrollBy({left: -window.innerWidth, behavior: 'smooth'});
+            e.preventDefault();
+        }
+        if (e.key === 'ArrowRight') {
+            dom.screenshotViewerTrack.scrollBy({left: window.innerWidth, behavior: 'smooth'});
+            e.preventDefault();
+        }
+    }
+});
+
+dom.screenshotScroll.addEventListener("keydown", (event) => {
+    const firstCard = dom.screenshotScroll.querySelector(".screenshot-card");
+    if (!firstCard) return;
+    const distance = firstCard.offsetWidth + 12;
+    if (event.key === "ArrowRight") {
+        event.preventDefault();
+        dom.screenshotScroll.scrollBy({left: distance, behavior: "smooth"});
+    }
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        dom.screenshotScroll.scrollBy({left: -distance, behavior: "smooth"});
+    }
+});
+
+let selectedRating = 0;
+const starBtns = dom.starsContainer?.querySelectorAll('.star-btn') || [];
+
+function updateStars() {
+    starBtns.forEach((btn, idx) => {
+        const rating = idx + 1;
+        const active = rating <= selectedRating;
+        btn.textContent = active ? '★' : '☆';
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', String(rating === selectedRating));
+    });
+}
+
+function hideRatingSubmit() {
+    if (dom.ratingSubmitContainer) {
+        dom.ratingSubmitContainer.classList.remove('visible');
+    }
+    selectedRating = 0;
+    updateStars();
+}
+
+function showRatingSubmit() {
+    if (!getCurrentAppKey() || hasUserRatedApp()) {
+        hideRatingSubmit();
+        return;
+    }
+    if (dom.ratingSubmitContainer) {
+        dom.ratingSubmitContainer.classList.add('visible');
+        selectedRating = 0;
+        updateStars();
+    }
+}
+
+let confirmationSelectedRating = 0;
+let ratingSubmissionInProgress = false;
+
+const confirmationStarBtns =
+    dom.ratingConfirmStars.querySelectorAll('.rating-confirm-star');
+
+let previousBodyOverflow = '';
+
+function updateConfirmationStars() {
+    confirmationStarBtns.forEach((btn, index) => {
+        const rating = index + 1;
+        const active = rating <= confirmationSelectedRating;
+        btn.textContent = active ? '★' : '☆';
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', String(rating === confirmationSelectedRating));
+    });
+
+    if (confirmationSelectedRating > 0) {
+        dom.ratingConfirmValue.textContent =
+            confirmationSelectedRating + ' out of 5 stars selected';
+    } else {
+        dom.ratingConfirmValue.textContent = 'Select your rating';
+    }
+
+    dom.ratingConfirmSubmit.disabled =
+        confirmationSelectedRating < 1 ||
+        confirmationSelectedRating > 5 ||
+        ratingSubmissionInProgress;
+}
+
+function openRatingConfirmation(rating) {
+    if (ratingSubmissionInProgress) return;
+
+    if (!currentAppData || !getCurrentAppKey()) {
+        showModal('Error', 'The selected app could not be identified.');
+        hideRatingSubmit();
+        return;
+    }
+
+    if (hasUserRatedApp()) {
+        hideRatingSubmit();
+        showToast('You have already rated this app.');
+        return;
+    }
+
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        hideRatingSubmit();
+        return;
+    }
+
+    selectedRating = rating;
+    updateStars();
+    confirmationSelectedRating = rating;
+
+    dom.ratingConfirmTitle.textContent =
+        safeStr(currentAppData.appName) || 'Rate this app';
+
+    const actualLogoUrl =
+        safeStr(currentAppData.logoUrl) ||
+        safeStr(dom.appIconImage.currentSrc) ||
+        safeStr(dom.appIconImage.src) ||
+        FALLBACK_LOGO;
+
+    dom.ratingConfirmLogo.onerror = function() {
+        this.onerror = null;
+        this.src = FALLBACK_LOGO;
+    };
+    dom.ratingConfirmLogo.src = actualLogoUrl;
+
+    updateConfirmationStars();
+
+    previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    dom.ratingConfirmationModal.classList.add('open');
+    dom.ratingConfirmationModal.setAttribute('aria-hidden', 'false');
+
+    setTimeout(() => {
+        if (!dom.ratingConfirmationModal.classList.contains('open')) return;
+        const selectedButton =
+            dom.ratingConfirmStars.querySelector(
+                `[data-rating="${confirmationSelectedRating}"]`
+            );
+        if (selectedButton) selectedButton.focus();
+    }, 100);
+}
+
+function closeRatingConfirmation() {
+    if (ratingSubmissionInProgress) return;
+
+    dom.ratingConfirmationModal.classList.remove('open');
+    dom.ratingConfirmationModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = previousBodyOverflow;
+
+    selectedRating = 0;
+    updateStars();
+
+    confirmationSelectedRating = 0;
+    updateConfirmationStars();
+}
+
+starBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (ratingSubmissionInProgress) return;
+
+        if (hasUserRatedApp()) {
+            hideRatingSubmit();
+            showToast('You have already rated this app.');
+            return;
+        }
+
+        const rating = parseInt(this.getAttribute('data-rating'), 10);
+        if (Number.isInteger(rating) && rating >= 1 && rating <= 5) {
+            openRatingConfirmation(rating);
+        }
+    });
+});
+
+confirmationStarBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (ratingSubmissionInProgress) return;
+
+        const rating = parseInt(this.getAttribute('data-rating'), 10);
+        if (Number.isInteger(rating) && rating >= 1 && rating <= 5) {
+            confirmationSelectedRating = rating;
+            updateConfirmationStars();
+        }
+    });
+});
+
+dom.ratingConfirmCancel.addEventListener('click', () => {
+    closeRatingConfirmation();
+});
+
+dom.ratingConfirmationModal.addEventListener('click', (event) => {
+    if (event.target === dom.ratingConfirmationModal) {
+        closeRatingConfirmation();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' &&
+        dom.ratingConfirmationModal.classList.contains('open')) {
+        if (!ratingSubmissionInProgress) {
+            closeRatingConfirmation();
+        }
+        event.preventDefault();
+        event.stopPropagation();
+    }
+});
+
+function submitRatingToBackend(documentId, appsId, rating) {
+    if (!isValidIdentifier(documentId) ||
+        !isValidIdentifier(appsId) ||
+        !Number.isInteger(rating) ||
+        rating < 1 ||
+        rating > 5) {
+        return;
+    }
+
+    const requestBody = {
+        DocumentID: documentId,
+        AppsID: appsId,
+        rating: rating
+    };
+
+    try {
+        fetch(RATING_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        }).catch(() => {
+        });
+    } catch (_) {
+    }
+}
+
+function resetRatingConfirmationUI() {
+    dom.ratingConfirmationModal.classList.remove('open');
+    dom.ratingConfirmationModal.classList.remove('submitting');
+    dom.ratingConfirmationModal.setAttribute('aria-hidden', 'true');
+
+    dom.ratingConfirmSubmit.classList.remove('loading');
+    dom.ratingConfirmSubmit.textContent = 'Submit Rating';
+    dom.ratingConfirmCancel.disabled = false;
+
+    confirmationStarBtns.forEach(btn => {
+        btn.disabled = false;
+    });
+
+    document.body.style.overflow = previousBodyOverflow;
+
+    confirmationSelectedRating = 0;
+    selectedRating = 0;
+
+    updateStars();
+    updateConfirmationStars();
+}
+
+dom.ratingConfirmSubmit.addEventListener('click', function() {
+    if (ratingSubmissionInProgress) return;
+
+    const submittedRating = confirmationSelectedRating;
+
+    if (!Number.isInteger(submittedRating) ||
+        submittedRating < 1 ||
+        submittedRating > 5) {
+        showToast('Please select a rating from 1 to 5.');
+        updateConfirmationStars();
+        return;
+    }
+
+    const appKey = getCurrentAppKey();
+    const documentId = currentDocumentId;
+    const appsId = currentMapField;
+
+    if (!appKey || !documentId || !appsId) {
+        showModal('Error', 'The selected app could not be identified.');
+        return;
+    }
+
+    if (!currentAppData) {
+        showModal('Error', 'The selected app data is unavailable.');
+        return;
+    }
+
+    if (hasUserRatedApp(appKey)) {
+        closeRatingConfirmation();
+        hideRatingSubmit();
+        showToast('You have already rated this app.');
+        return;
+    }
+
+    if (!Number.isInteger(submittedRating) ||
+        submittedRating < 1 ||
+        submittedRating > 5) {
+        return;
+    }
+
+    ratingSubmissionInProgress = true;
+
+    dom.ratingConfirmationModal.classList.add('submitting');
+    dom.ratingConfirmSubmit.disabled = true;
+    dom.ratingConfirmSubmit.classList.add('loading');
+    dom.ratingConfirmSubmit.textContent = 'Submitting...';
+    dom.ratingConfirmCancel.disabled = true;
+
+    confirmationStarBtns.forEach(btn => {
+        btn.disabled = true;
+    });
+
+    try {
+        markAppAsRated(appKey);
+
+        const updatedStars = normalizeStars(currentAppData.stars);
+        updatedStars[submittedRating - 1] += 1;
+
+        currentAppData.stars = updatedStars;
+
+        renderRatings(currentAppData);
+        renderInfoRow(currentAppData);
+
+        hideRatingSubmit();
+
+        submitRatingToBackend(
+            documentId,
+            appsId,
+            submittedRating
+        );
+
+        resetRatingConfirmationUI();
+
+        ratingSubmissionInProgress = false;
+
+        showToast('Rating submitted!');
+
+    } catch (error) {
+        console.error('Local rating update failed:', error);
+
+        ratingSubmissionInProgress = false;
+
+        dom.ratingConfirmationModal.classList.remove('submitting');
+        dom.ratingConfirmSubmit.classList.remove('loading');
+        dom.ratingConfirmSubmit.textContent = 'Submit Rating';
+        dom.ratingConfirmCancel.disabled = false;
+
+        confirmationStarBtns.forEach(btn => {
+            btn.disabled = false;
+        });
+
+        updateConfirmationStars();
+
+        showModal(
+            'Rating failed',
+            'Your rating could not be saved locally. Please try again.'
+        );
+    }
+});
+
+let downloadInProgress = false;
+
+function getFileNameFromUrl(url) {
+    try {
+        const u = new URL(url);
+        const parts = u.pathname.split('/');
+        const last = parts[parts.length - 1];
+        if (last && last.includes('.')) return last;
+    } catch (_) {}
+    return 'app.apk';
+}
+
+function showModal(title, message) {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+
+    const paragraph = document.createElement('p');
+    paragraph.textContent = message;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'OK';
+
+    modal.append(heading, paragraph, button);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    const close = () => {
+        backdrop.remove();
+        document.removeEventListener('keydown', keyHandler);
+    };
+
+    button.addEventListener("click", close);
+    backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) close();
+    });
+
+    const keyHandler = (e) => {
+        if (e.key === "Escape") {
+            close();
+            e.preventDefault();
+        }
+    };
+    document.addEventListener('keydown', keyHandler);
+
+    setTimeout(() => button.focus(), 30);
+}
+
+async function startSilentDownload() {
+    if (downloadInProgress) return;
+
+    const fileUrl = currentAppData?.appFileUrl;
+    if (!fileUrl || typeof fileUrl !== 'string' || fileUrl.trim() === '') {
+        showModal('Download unavailable', 'No app file URL is available for this app.');
+        return;
+    }
+
+    const trimmedUrl = fileUrl.trim();
+
+    try {
+        const parsedUrl = new URL(trimmedUrl);
+        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+            throw new Error('Unsupported URL protocol');
+        }
+    } catch (_) {
+        showModal('Invalid URL', 'The app file URL appears to be invalid.');
+        return;
+    }
+
+    const appKey = getCurrentAppKey();
+    const docId = currentDocumentId;
+    const mapField = currentMapField;
+
+    if (!appKey || !docId || !mapField) {
+        showModal('Download unavailable', 'The selected app could not be identified.');
+        return;
+    }
+
+    const alreadyDownloaded = hasUserDownloadedApp(appKey);
+
+    downloadInProgress = true;
+    dom.installBtn.disabled = true;
+
+    const link = document.createElement('a');
+    link.href = trimmedUrl;
+    link.download = getFileNameFromUrl(trimmedUrl) || 'app.apk';
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    if (!alreadyDownloaded) {
+        try {
+            const docRef = doc(db, 'store', docId);
+            await updateDoc(docRef, {
+                [`${mapField}.downloads`]: increment(1)
+            });
+
+            if (currentAppData) {
+                currentAppData.downloads = safeNum(currentAppData.downloads) + 1;
+            }
+
+            markAppAsDownloaded(appKey);
+        } catch (error) {
+            console.warn('Failed to increment downloads in Firestore:', error);
+        }
+    }
+
+    showRatingSubmit();
+
+    setTimeout(() => {
+        downloadInProgress = false;
+        dom.installBtn.disabled = false;
+    }, 2000);
+}
+
+dom.installBtn.addEventListener('click', startSilentDownload);
+
+dom.backBtn.addEventListener("click", () => {
+    window.location.href = "index.html";
+});
+
+dom.bookmarkBtn.addEventListener("click", toggleSaveApp);
+
+function getShareUrl() {
+    if (!isValidIdentifier(currentDocumentId) ||
+        !isValidIdentifier(currentMapField)) {
+        return null;
+    }
+    const base = 'https://superplaystore.github.io/1z/download_page.html';
+    return `${base}/${currentDocumentId}-${currentMapField}`;
+}
+
+async function copyTextToClipboard(text) {
+    if (navigator.clipboard &&
+        typeof navigator.clipboard.writeText === 'function') {
+        await navigator.clipboard.writeText(text);
+        return true;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+
+    let copied = false;
+    try {
+        copied = document.execCommand('copy');
+    } catch (error) {
+        console.warn('Fallback clipboard copy failed:', error);
+    }
+
+    textarea.remove();
+
+    if (!copied) {
+        throw new Error('Clipboard copy is not supported.');
+    }
+    return true;
+}
+
+async function handleCopyLink() {
+    const shareUrl = getShareUrl();
+
+    if (!shareUrl) {
+        showToast('No app ID available');
+        return;
+    }
+
+    try {
+        await copyTextToClipboard(shareUrl);
+        showToast('Link copied.');
+    } catch (error) {
+        console.warn('Clipboard write failed:', error);
+        showToast('Unable to copy link.');
+    }
+}
+
+async function handleShare() {
+    const shareUrl = getShareUrl();
+
+    if (!shareUrl) {
+        showToast('No app ID available');
+        return;
+    }
+
+    const shareTitle = currentAppData?.appName || "App";
+    const shareText = "Check out this app.";
+
+    if (typeof navigator.share !== 'function') {
+        try {
+            await copyTextToClipboard(shareUrl);
+            showToast('Sharing unavailable. Link copied.');
+        } catch (error) {
+            console.warn('Share and clipboard fallback failed:', error);
+            showToast('Sharing is not available on this browser.');
+        }
+        return;
+    }
+
+    let logoFile = null;
+    try {
+        const logoUrl = currentAppData?.logoUrl;
+
+        if (logoUrl &&
+            typeof logoUrl === 'string' &&
+            logoUrl.trim() !== '') {
+            const response = await fetch(logoUrl, { mode: 'cors' });
+            if (response.ok) {
+                const blob = await response.blob();
+                if (blob && blob.type && blob.type.startsWith('image/')) {
+                    const mimeToExt = {
+                        'image/png': 'png',
+                        'image/jpeg': 'jpg',
+                        'image/jpg': 'jpg',
+                        'image/webp': 'webp',
+                        'image/gif': 'gif',
+                        'image/svg+xml': 'svg',
+                        'image/bmp': 'bmp',
+                        'image/avif': 'avif'
+                    };
+                    const ext = mimeToExt[blob.type] || 'png';
+                    logoFile = new File(
+                        [blob],
+                        'app-logo.' + ext,
+                        { type: blob.type || 'image/png' }
+                    );
+                }
+            }
+        }
+    } catch (logoError) {
+        console.warn('Could not fetch logo for sharing:', logoError);
+        logoFile = null;
+    }
+
+    let canShareImage = false;
+    if (logoFile && typeof navigator.canShare === 'function') {
+        try {
+            canShareImage = navigator.canShare({ files: [logoFile] });
+        } catch (error) {
+            canShareImage = false;
+        }
+    }
+
+    const urlOnlyShareData = {
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl
+    };
+
+    const imageShareData = canShareImage ? {
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl,
+        files: [logoFile]
+    } : null;
+
+    try {
+        if (imageShareData) {
+            try {
+                await navigator.share(imageShareData);
+                return;
+            } catch (imageShareError) {
+                if (imageShareError.name === 'AbortError') return;
+                console.warn('Image sharing failed. Trying URL sharing:', imageShareError);
+            }
+        }
+
+        try {
+            await navigator.share(urlOnlyShareData);
+        } catch (shareError) {
+            if (shareError.name === 'AbortError') return;
+
+            console.error('URL sharing failed:', shareError);
+
+            try {
+                await copyTextToClipboard(shareUrl);
+                showToast('Sharing failed. Link copied instead.');
+            } catch (copyError) {
+                console.error('Final copy fallback failed:', copyError);
+                showToast('Unable to share or copy the link.');
+            }
+        }
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            console.error('Share failed:', error);
+            showToast('Unable to share at this time.');
+        }
+    }
+}
+
+dom.shareBtn.addEventListener('click', handleShare);
+dom.copyLinkBtn.addEventListener('click', handleCopyLink);
+
+dom.aboutButton.addEventListener("click", () => {
+    window.location.href = "app_information.html";
+});
+
+(function initMobileHeader() {
+    const topNav = document.querySelector(".top-nav");
+    const container = document.querySelector(".app-container");
+
+    if (!topNav || !container) return;
+
+    let lastScrollY = window.scrollY;
+    let headerOffset = 0;
+    let headerHeight = 0;
+    let isInitialized = false;
+    let ticking = false;
+    let animationFrame = null;
+
+    function getHeaderHeight() {
+        return topNav.getBoundingClientRect().height || 64;
+    }
+
+    function applyMobileStyles() {
+        topNav.classList.add("mobile-fixed");
+        topNav.style.transition = "none";
+        headerHeight = getHeaderHeight();
+        container.style.paddingTop = headerHeight + "px";
+        topNav.style.top = "0";
+        updateHeaderTransform(true);
+    }
+
+    function removeMobileStyles() {
+        topNav.classList.remove("mobile-fixed");
+        topNav.style.transform = "";
+        topNav.style.transition = "";
+        topNav.style.top = "";
+        container.style.paddingTop = "";
+        headerOffset = 0;
+        topNav.style.transform = "translate3d(0, 0, 0)";
+    }
+
+    function applyTransform() {
+        topNav.style.transform = "translate3d(0, " + headerOffset + "px, 0)";
+    }
+
+    function clampOffset() {
+        headerOffset = Math.max(-headerHeight, Math.min(0, headerOffset));
+    }
+
+    function updateHeaderTransform() {
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY <= 0) {
+            headerOffset = 0;
+            applyTransform();
+            lastScrollY = currentScrollY;
+            return;
+        }
+
+        const delta = currentScrollY - lastScrollY;
+        headerOffset -= delta;
+        clampOffset();
+        applyTransform();
+        lastScrollY = currentScrollY;
+    }
+
+    function onScroll() {
+        if (!isInitialized || ticking) return;
+
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+
+        animationFrame = requestAnimationFrame(() => {
+            updateHeaderTransform();
+            ticking = false;
+            animationFrame = null;
+        });
+
+        ticking = true;
+    }
+
+    function setupMobile() {
+        if (isInitialized) return;
+
+        isInitialized = true;
+        lastScrollY = window.scrollY;
+        headerOffset = 0;
+        applyMobileStyles();
+
+        const currentScroll = window.scrollY;
+        headerOffset = -Math.min(currentScroll, headerHeight);
+        clampOffset();
+        applyTransform();
+        lastScrollY = currentScroll;
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    function teardownMobile() {
+        if (!isInitialized) return;
+
+        isInitialized = false;
+        window.removeEventListener("scroll", onScroll);
+
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+        }
+
+        ticking = false;
+        removeMobileStyles();
+    }
+
+    setupMobile();
+
+    let resizeTimeout = null;
+
+    window.addEventListener("resize", () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+
+        resizeTimeout = setTimeout(() => {
+            if (isInitialized) {
+                const newHeight = getHeaderHeight();
+
+                if (newHeight !== headerHeight) {
+                    headerHeight = newHeight;
+                    container.style.paddingTop = headerHeight + "px";
+                    clampOffset();
+                    applyTransform();
+                }
+            }
+            resizeTimeout = null;
+        }, 150);
+    });
+
+    window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+            if (isInitialized) {
+                const newHeight = getHeaderHeight();
+
+                if (newHeight !== headerHeight) {
+                    headerHeight = newHeight;
+                    container.style.paddingTop = headerHeight + "px";
+                    clampOffset();
+                    applyTransform();
+                }
+            }
+        }, 300);
+    });
+})();
+
+function parseAppIdsFromUrl() {
+    const path = window.location.pathname;
+    const marker = 'download_page.html/';
+    const markerIndex = path.indexOf(marker);
+
+    if (markerIndex === -1) return null;
+
+    const rest = path.slice(markerIndex + marker.length);
+    if (!rest) return null;
+
+    const sepIndex = rest.indexOf('-');
+    if (sepIndex === -1) return null;
+
+    const documentId = rest.slice(0, sepIndex);
+    const appsId = rest.slice(sepIndex + 1);
+
+    if (!isValidIdentifier(documentId) || !isValidIdentifier(appsId)) {
+        return null;
+    }
+
+    if (documentId.includes('/') || appsId.includes('/')) {
+        return null;
+    }
+
+    return { documentId, appsId };
+}
+
+function initAppIdFromUrl() {
+    const path = window.location.pathname;
+    const marker = 'download_page.html/';
+    const markerIndex = path.indexOf(marker);
+
+    const hasPathSegment = markerIndex !== -1 &&
+        path.slice(markerIndex + marker.length).length > 0;
+
+    if (hasPathSegment) {
+        const parsed = parseAppIdsFromUrl();
+
+        if (!parsed) {
+            localStorage.removeItem('App_id_ENYW1QoR2Dw_9Bwql4OBqUoBOay');
+            return false;
+        }
+
+        saveCurrentAppId(parsed.documentId, parsed.appsId);
+        return true;
+    }
+
+    return readCurrentAppId() !== null;
+}
+
+function showContentError(message, retryFn) {
+    dom.contentErrorContainer.innerHTML = '';
+
+    dom.appName.textContent = '';
+    dom.category.textContent = '';
+    dom.rating.textContent = '—';
+    dom.reviews.textContent = '';
+    dom.appSize.textContent = '—';
+    dom.downloads.textContent = '—';
+    dom.version.textContent = '—';
+
+    dom.screenshotScroll.innerHTML = '';
+    dom.screenshotViewerTrack.innerHTML = '';
+
+    dom.ratingsOverall.textContent = '—';
+    dom.ratingsStars.textContent = '☆☆☆☆☆';
+    dom.ratingsCount.textContent = '—';
+    dom.ratingsRight.innerHTML = '';
+
+    dom.aboutDescription.textContent = '';
+    dom.dataSafetyDescription.textContent = '';
+    dom.aboutContent.innerHTML = '';
+
+    const div = document.createElement('div');
+    div.className = 'content-error';
+
+    const icon = document.createElement('div');
+    icon.className = 'error-icon';
+    icon.textContent = '⚠️';
+
+    const title = document.createElement('div');
+    title.className = 'error-title';
+    title.textContent = 'Unable to load';
+
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'error-message';
+    errorMessage.textContent = message || 'Something went wrong.';
+
+    div.append(icon, title, errorMessage);
+
+    if (typeof retryFn === 'function') {
+        const retryButton = document.createElement('button');
+        retryButton.className = 'error-retry-btn';
+        retryButton.textContent = 'Try Again';
+        retryButton.addEventListener('click', retryFn);
+        div.appendChild(retryButton);
+    }
+
+    dom.contentErrorContainer.appendChild(div);
+    hideRatingSubmit();
+}
+
+function clearContentError() {
+    dom.contentErrorContainer.innerHTML = '';
+}
+
+function renderInfoRow(data) {
+    const stars = normalizeStars(data.stars);
+    const reviews = calculateReviewCount(stars);
+    const ratingVal = calculateAverageRating(stars);
+
+    dom.rating.textContent = reviews > 0 ? ratingVal.toFixed(1) + " ★" : "—";
+    dom.reviews.textContent = reviews > 0 ? formatNumber(reviews) + " reviews" : "No reviews";
+    dom.appSize.textContent = safeStr(data.appDataSize) || "—";
+    dom.downloads.textContent =
+        safeNum(data.downloads) > 0 ? formatNumber(data.downloads) : "—";
+    dom.version.textContent = safeStr(data.version) || "—";
+}
+
+let pageLoading = true;
+let loaderHidden = false;
+
+function hidePageLoader() {
+    if (loaderHidden) return;
+
+    loaderHidden = true;
+    pageLoading = false;
+
+    const loader = document.getElementById('pageLoader');
+    if (!loader) return;
+
+    loader.classList.add('hidden');
+
+    setTimeout(() => {
+        if (loader.parentNode) loader.remove();
+    }, 200);
+}
+
+const AD_CONFIGS = {
+    mobile: {
+        breakpoint: [0, 459],
+        width: 320,
+        height: 50,
+        key: '3d64dcd109cbff0eb6b6833800dcc872',
+        src: 'https://www.highrevenueformat.com/3d64dcd109cbff0eb6b6833800dcc872/invoke.js'
+    },
+    tablet: {
+        breakpoint: [460, 719],
+        width: 468,
+        height: 60,
+        key: 'ab09ab2788b403c919f0192107664bb7',
+        src: 'https://www.highrevenueformat.com/ab09ab2788b403c919f0192107664bb7/invoke.js'
+    },
+    desktop: {
+        breakpoint: [720, Infinity],
+        width: 728,
+        height: 90,
+        key: '2e92aa89d1d3516d1fc5d471f79d27e1',
+        src: 'https://www.highrevenueformat.com/2e92aa89d1d3516d1fc5d471f79d27e1/invoke.js'
+    }
+};
+
+let activeAdSlot = null;
+let activeAdConfig = null;
+let currentAdKey = null;
+let adCheckInterval = null;
+let adResizeTimeout = null;
+
+function getCurrentAdConfig() {
+    const width = window.innerWidth;
+
+    if (width <= 459) {
+        return { ...AD_CONFIGS.mobile, breakpoint: 'mobile' };
+    }
+
+    if (width <= 719) {
+        return { ...AD_CONFIGS.tablet, breakpoint: 'tablet' };
+    }
+
+    return { ...AD_CONFIGS.desktop, breakpoint: 'desktop' };
+}
+
+function hasRenderedAd(slot) {
+    if (!slot) return false;
+
+    const rect = slot.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) return true;
+
+    const iframe = slot.querySelector('iframe');
+
+    if (iframe) {
+        const iframeRect = iframe.getBoundingClientRect();
+        if (iframeRect.width > 0 && iframeRect.height > 0) return true;
+        if (iframe.offsetWidth > 0 && iframe.offsetHeight > 0) return true;
+    }
+
+    const ins = slot.querySelector('ins');
+
+    if (ins) {
+        const insRect = ins.getBoundingClientRect();
+        if (insRect.width > 0 && insRect.height > 0) return true;
+        if (ins.offsetWidth > 0 && ins.offsetHeight > 0) return true;
+    }
+
+    return slot.offsetWidth > 0 && slot.offsetHeight > 0;
+}
+
+function resetAdWrapper() {
+    const wrap = dom.responsiveAdWrap;
+    if (!wrap) return;
+
+    wrap.classList.remove('ad-visible');
+    wrap.style.height = '0';
+    wrap.style.margin = '0';
+}
+
+function removeActiveAdSlot() {
+    if (adCheckInterval) {
+        clearInterval(adCheckInterval);
+        adCheckInterval = null;
+    }
+
+    if (activeAdSlot?.parentNode) {
+        activeAdSlot.parentNode.removeChild(activeAdSlot);
+    }
+
+    activeAdSlot = null;
+    activeAdConfig = null;
+    currentAdKey = null;
+
+    resetAdWrapper();
+}
+
+function createAdSlot(config) {
+    const wrap = dom.responsiveAdWrap;
+    if (!wrap) return null;
+
+    const slot = document.createElement('div');
+    slot.className = 'ad-slot';
+    slot.setAttribute('data-ad-width', config.width);
+    slot.setAttribute('data-ad-height', config.height);
+    slot.setAttribute('data-ad-breakpoint', config.breakpoint);
+    slot.style.width = '100%';
+    slot.style.height = '0';
+    slot.style.margin = '0';
+    slot.style.padding = '0';
+
+    wrap.appendChild(slot);
+    return slot;
+}
+
+function loadAdScript(slot, config) {
+    window.atOptions = {
+        key: config.key,
+        format: 'iframe',
+        height: config.height,
+        width: config.width,
+        params: {}
+    };
+
+    const script = document.createElement('script');
+    script.src = config.src;
+    script.async = true;
+    script.setAttribute('data-ad-script', config.key);
+
+    slot.appendChild(script);
+}
+
+function showAdSlot(slot) {
+    if (!slot) return;
+
+    slot.classList.add('visible');
+    slot.style.height = 'auto';
+
+    const wrap = dom.responsiveAdWrap;
+
+    if (wrap) {
+        wrap.classList.add('ad-visible');
+        wrap.style.height = 'auto';
+        wrap.style.margin = '8px 0 12px';
+    }
+}
+
+function checkAndShowAd() {
+    if (!activeAdSlot) return;
+
+    if (hasRenderedAd(activeAdSlot)) {
+        showAdSlot(activeAdSlot);
+
+        if (adCheckInterval) {
+            clearInterval(adCheckInterval);
+            adCheckInterval = null;
+        }
+    }
+}
+
+function startAdPolling() {
+    if (adCheckInterval) return;
+
+    let attempts = 0;
+    const maxAttempts = 60;
+
+    adCheckInterval = setInterval(() => {
+        checkAndShowAd();
+        attempts++;
+
+        if (attempts >= maxAttempts) {
+            clearInterval(adCheckInterval);
+            adCheckInterval = null;
+        }
+    }, 250);
+
+    checkAndShowAd();
+}
+
+function loadResponsiveAd() {
+    const config = getCurrentAdConfig();
+
+    if (activeAdSlot &&
+        activeAdConfig &&
+        activeAdConfig.breakpoint === config.breakpoint &&
+        currentAdKey === config.key) {
+        return;
+    }
+
+    removeActiveAdSlot();
+
+    const slot = createAdSlot(config);
+    if (!slot) return;
+
+    activeAdSlot = slot;
+    activeAdConfig = config;
+    currentAdKey = config.key;
+
+    loadAdScript(slot, config);
+    startAdPolling();
+}
+
+function handleAdResize() {
+    const config = getCurrentAdConfig();
+
+    if (!activeAdConfig ||
+        activeAdConfig.breakpoint !== config.breakpoint) {
+        loadResponsiveAd();
+    } else {
+        checkAndShowAd();
+    }
+}
+
+function initResponsiveAd() {
+    loadResponsiveAd();
+
+    window.addEventListener('resize', () => {
+        if (adResizeTimeout) clearTimeout(adResizeTimeout);
+
+        adResizeTimeout = setTimeout(() => {
+            handleAdResize();
+            adResizeTimeout = null;
+        }, 200);
+    });
+
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleAdResize, 300);
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResponsiveAd);
+} else {
+    initResponsiveAd();
+}
+
+async function loadAppData() {
+    clearContentError();
+
+    try {
+        const selectedApp = readCurrentAppId();
+
+        if (!selectedApp) {
+            showContentError(
+                'Missing or invalid app identification. Please go back and select an app.',
+                () => { window.location.href = 'index.html'; }
+            );
+            hidePageLoader();
+            return;
+        }
+
+        const { documentId, mapField } = selectedApp;
+
+        currentDocumentId = documentId;
+        currentMapField = mapField;
+
+        const docRef = doc(db, 'store', documentId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            showContentError(
+                'The selected app document was not found. It may have been removed.',
+                () => { window.location.reload(); }
+            );
+            hidePageLoader();
+            return;
+        }
+
+        const documentData = docSnap.data();
+        const data = documentData[mapField];
+
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            showContentError(
+                'The selected app was not found inside this document.',
+                () => { window.location.href = 'index.html'; }
+            );
+            hidePageLoader();
+            return;
+        }
+
+        const appData = {
+            appName: safeStr(data.appName),
+            packageName: safeStr(data.packageName),
+            category: safeStr(data.category),
+            tags: safeArr(data.tags),
+            permissions: safeStr(data.permissions),
+            version: safeStr(data.version),
+            developer: safeStr(data.developer),
+            releaseNotes: safeStr(data.releaseNotes),
+            logoUrl: safeStr(data.logoUrl),
+            screenshotUrls: safeArr(data.screenshotUrls),
+            appFileUrl: safeStr(data.appFileUrl),
+            dataSafety: safeStr(data.dataSafety),
+            requiredOs: safeStr(data.requiredOs),
+            appDataSize: safeStr(data.appDataSize),
+            updatedAt: data.updatedAt ?? null,
+            downloads: safeNum(data.downloads),
+            stars: normalizeStars(data.stars)
+        };
+
+        currentAppData = appData;
+
+        renderAppHeader(appData);
+        renderInfoRow(appData);
+        renderScreenshots(appData.screenshotUrls);
+        renderRatings(appData);
+        renderAbout(appData);
+
+        restoreBookmarkState();
+
+        if (hasUserRatedApp()) {
+            hideRatingSubmit();
+        } else {
+            showRatingSubmit();
+        }
+
+        downloadInProgress = false;
+        dom.installBtn.disabled = false;
+        dom.installBtn.textContent = 'Install';
+
+        hidePageLoader();
+
+    } catch (error) {
+        console.error('Firebase/Firestore error:', error);
+
+        showContentError(
+            'Network error. Please check your connection and try again.',
+            () => { loadAppData(); }
+        );
+
+        hidePageLoader();
+    }
+}
+
+const validUrlIdentifiers = initAppIdFromUrl();
+
+if (validUrlIdentifiers) {
+    loadAppData();
+} else {
+    showContentError(
+        'The shared app link is invalid. A valid Document ID and Apps ID are required.',
+        () => { window.location.href = 'index.html'; }
+    );
+    hidePageLoader();
+}
+
+console.log('[Firestore] App data is loaded from the selected nested Map.');
+console.log('[Firestore] Download count updates target the selected Map.');
+console.log('[Firestore] Ratings are submitted through the backend API.');
+console.log('[Rating API] POST ' + RATING_API_URL);
+console.log('[Rating API] Fire-and-forget request enabled.');
+console.log('[Rating] Backend response body is not read.');
+console.log('[Rating] LocalStorage Rated_apps prevents repeat frontend submissions.');
+console.log('[Rating] Optimistic local rating UI updates are enabled.');
+console.log('[LocalStorage] App identities use documentId::appsId (mapField preserved).');
+console.log('[Share] Shared URLs use the format: download_page.html/{DocumentID}-{AppsID}.');
+console.log('[Share] Direct Share and Copy Link buttons are active.');
+console.log('[Ad Controller] Dynamic single-slot responsive ad system active.');
+console.log('[Rating] Automatic confirmation popup is active.');
+console.log('[Rating] Original stars only open the confirmation popup.');
+console.log('[Rating] Popup Submit Rating sends the backend API request.');
+console.log('[Rating] Cancel, backdrop and Escape reset all original stars.');
+
+</script>
+</body>
+</html>
